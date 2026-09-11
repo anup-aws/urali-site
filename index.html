@@ -1,0 +1,963 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>urali | Kaya varuthathu, fried after you order it</title>
+<meta name="description" content="A farm-to-home initiative, just started. Thrissur nendran chips fried only in coconut oil, no palm oil, no preservatives added, in small weekly batches. Reserve a box for Kothanur, Horamavu, Ramamurthy Nagar or Byrathi and pay only when your batch is confirmed.">
+<meta name="theme-color" content="#F2B632">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Chettan+2:wght@500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --manjal:#F2B632;       /* turmeric: the colour of the chips */
+  --manjal-deep:#D9951A;
+  --leaf:#1E4D2B;         /* banana leaf */
+  --leaf-dark:#133020;
+  --leaf-soft:#CFE0CC;
+  --kasavu:#C9A227;       /* gold border of a kasavu mundu */
+  --mundu:#FFFEF8;
+  --sharkara:#4A2A17;     /* jaggery */
+  --muted:#5E5446;
+  --line:#E4DAC0;
+  --chuvappu:#B3261E;
+  --display:"Baloo Chettan 2","Noto Sans Malayalam",system-ui,sans-serif;
+  --body:"Source Serif 4",Georgia,"Noto Serif Malayalam",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--leaf);font-family:var(--body);color:var(--leaf-dark);font-size:17px;line-height:1.6}
+body.sheet-open{overflow:hidden}
+.page{max-width:480px;margin:0 auto;background:var(--mundu);min-height:100vh;padding-bottom:92px;overflow:hidden;position:relative}
+svg{display:block;max-width:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--leaf);outline-offset:3px;border-radius:8px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;line-height:1.08;letter-spacing:-0.01em}
+[lang="ml"]{font-family:var(--display)}
+
+/* kasavu stripe divider */
+.kasavu{height:18px;background:linear-gradient(to bottom,var(--mundu) 0 4px,var(--kasavu) 4px 6px,var(--mundu) 6px 8px,var(--kasavu) 8px 14px,var(--mundu) 14px 16px,var(--kasavu) 16px 17px,var(--mundu) 17px)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 26px;border-radius:999px;font-family:var(--display);font-weight:700;font-size:18px;text-decoration:none;line-height:1.15;text-align:center}
+.btn-primary{background:var(--leaf);color:var(--mundu)}
+.btn-primary:active{transform:translateY(1px)}
+.btn-block{width:100%}
+.btn-ghost{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 8px;text-decoration:underline;text-underline-offset:4px;font-size:16px}
+.link{text-decoration:underline;text-underline-offset:3px;color:var(--leaf);font-weight:600}
+
+/* hero */
+.hero{background:var(--manjal);padding:18px 22px 30px}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand-mark{font-family:var(--display);font-weight:800;font-size:30px;letter-spacing:-0.03em;line-height:1}
+.brand-ml{font-weight:600;font-size:18px;color:var(--sharkara)}
+.brand-route{margin-left:auto;font-size:14px;font-style:italic}
+.hero h1{font-size:43px;margin:22px 0 6px;max-width:11ch}
+.hero .ml-line{font-size:21px;font-weight:600;color:var(--sharkara)}
+.hero-art{margin:4px -22px 6px}
+.lede{max-width:36ch}
+.next-batch{background:var(--mundu);border-radius:16px;padding:14px 16px 12px;margin:20px 0 18px;box-shadow:0 6px 0 var(--manjal-deep)}
+.nb-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px}
+.nb-label{font-size:15px;color:var(--muted)}
+.nb-top strong{font-family:var(--display);font-size:22px;font-weight:800}
+.nb-count{font-size:15px;margin-top:9px;line-height:1.4}
+.nb-cut{font-size:14px;color:var(--muted)}
+.hero-cta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+.bar{display:block;height:10px;background:#EFE5C9;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--leaf);border-radius:inherit;transition:width .9s cubic-bezier(.3,.8,.3,1)}
+
+/* hero illustration: one load moment */
+.drop{animation:drop .8s cubic-bezier(.25,1.45,.5,1) both;transform-box:fill-box;transform-origin:center}
+@keyframes drop{from{transform:translateY(-150px) rotate(-70deg);opacity:0}to{transform:none;opacity:1}}
+.steam{opacity:.5;animation:steam 3.2s ease-in-out 3 both}
+@keyframes steam{0%{opacity:0;transform:translateY(8px)}35%{opacity:.75}100%{opacity:0;transform:translateY(-26px)}}
+
+/* sections */
+.sec{padding:44px 22px}
+.sec h2{font-size:32px;margin-bottom:8px}
+.intro{color:var(--muted);margin-bottom:26px;max-width:38ch}
+
+/* how it works */
+.steps{list-style:none;display:grid;gap:20px}
+.steps li{display:grid;grid-template-columns:46px 1fr;gap:14px;align-items:start}
+.steps .n{width:46px;height:46px;border-radius:50%;background:var(--manjal);font-family:var(--display);font-weight:800;font-size:23px;display:grid;place-items:center;line-height:1}
+.steps h3{font-size:20px;margin:6px 0 3px}
+.steps p{color:var(--muted);font-size:16px}
+
+/* boxes */
+.box{margin-bottom:44px}
+.box:last-child{margin-bottom:0}
+.flip{perspective:1200px;cursor:pointer}
+.flip-inner{position:relative;height:292px;transition:transform .7s cubic-bezier(.3,.7,.2,1);transform-style:preserve-3d}
+.flip.is-flipped .flip-inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.stage{background:var(--stage);display:grid;place-items:center;padding:16px}
+.stage svg{width:100%;max-width:270px}
+.face-back{transform:rotateY(180deg);background:#fff;border:2px solid var(--leaf);padding:18px 20px 40px;overflow:auto}
+.face-back .back-ml{font-size:15px;color:var(--sharkara);font-weight:600}
+.face-back h4{font-size:20px;margin:0 0 8px}
+.face-back p{font-size:15.5px;line-height:1.5;margin-bottom:6px}
+.face-back .back-kasavu{position:absolute;left:0;right:0;bottom:10px;height:18px;background:linear-gradient(to bottom,transparent 0 4px,var(--kasavu) 4px 6px,transparent 6px 8px,var(--kasavu) 8px 14px,transparent 14px 16px,var(--kasavu) 16px 17px,transparent 17px)}
+.ribbon{position:absolute;top:14px;left:14px;background:var(--leaf-dark);color:var(--mundu);font-family:var(--display);font-weight:700;font-size:14px;padding:5px 12px 3px;border-radius:999px;z-index:1}
+.soon .stage svg{filter:saturate(.45)}
+.box-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:16px}
+.box-head h3{font-size:25px}
+.price{font-family:var(--display);font-weight:800;font-size:23px;white-space:nowrap}
+.soon .box-head h3{color:var(--muted)}
+.box-sub{color:var(--muted);font-size:16px;margin-top:2px}
+.box-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+.flip-btn{font-size:15px;font-style:italic;text-decoration:underline;text-underline-offset:4px;color:var(--leaf);min-height:44px;padding:0 2px}
+.btn-add{background:var(--manjal);color:var(--leaf-dark);min-height:48px;padding:0 24px;font-size:17px}
+.btn-line{border:2px solid var(--leaf);color:var(--leaf);min-height:46px;padding:0 18px;font-size:16px}
+.stepper{display:flex;align-items:center;border:2px solid var(--leaf);border-radius:999px;overflow:hidden;background:#fff}
+.stepper button{width:48px;height:46px;font-size:24px;font-family:var(--display);color:var(--leaf);line-height:1}
+.stepper button:disabled{opacity:.3;cursor:not-allowed}
+.stepper output{min-width:32px;text-align:center;font-family:var(--display);font-weight:800;font-size:20px}
+
+/* story */
+.story{background:var(--leaf);color:var(--mundu)}
+.story .intro{color:var(--leaf-soft)}
+.timeline{list-style:none}
+.timeline li{display:grid;grid-template-columns:62px 1fr;gap:16px;padding-bottom:28px;position:relative}
+.timeline li::before{content:"";position:absolute;left:30px;top:64px;bottom:2px;width:2px;background:repeating-linear-gradient(to bottom,var(--kasavu) 0 6px,transparent 6px 12px)}
+.timeline li:last-child{padding-bottom:0}
+.timeline li:last-child::before{display:none}
+.t-icon{width:62px;height:62px;border-radius:50%;background:var(--leaf-dark);border:2px solid var(--kasavu);display:grid;place-items:center}
+.t-icon svg{width:34px;height:34px;fill:none;stroke:var(--manjal);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.timeline h3{font-size:21px;color:var(--manjal);margin:8px 0 4px}
+.timeline p{font-size:16px;color:#E3ECE0}
+.pull{margin-top:40px;padding-top:26px;border-top:2px solid rgba(201,162,39,.5)}
+.pull p:first-child{font-family:var(--display);font-weight:600;font-size:25px;line-height:1.2}
+.pull .maker{margin-top:14px;font-style:italic;color:var(--leaf-soft);font-size:16px}
+
+/* farm to home */
+.about{background:#EEF4EA}
+.about p+p{margin-top:12px}
+.about .quiet{color:var(--muted)}
+.chain{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:4px 0 28px;position:relative}
+.chain::before{content:"";position:absolute;left:12.5%;right:12.5%;top:27px;height:2px;background:repeating-linear-gradient(to right,var(--kasavu) 0 6px,transparent 6px 12px)}
+.chain li{text-align:center;position:relative}
+.c-icon{width:56px;height:56px;margin:0 auto 8px;border-radius:50%;background:var(--manjal);display:grid;place-items:center}
+.c-icon svg{width:30px;height:30px;fill:none;stroke:var(--leaf-dark);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.chain span.c-label{display:block;font-family:var(--display);font-weight:700;font-size:14px;line-height:1.2}
+
+/* what's in it */
+.claims{display:flex;flex-wrap:wrap;gap:12px 10px;margin:6px 0 30px}
+.claim{display:inline-block;border:2.5px dashed var(--chuvappu);border-radius:12px;color:var(--chuvappu);font-family:var(--display);font-weight:800;font-size:19px;line-height:1.1;padding:9px 14px 6px;background:#fff}
+.claim.good{border-color:var(--leaf);color:var(--leaf)}
+.claims .claim:nth-child(1){transform:rotate(-3deg)}
+.claims .claim:nth-child(2){transform:rotate(2deg)}
+.claims .claim:nth-child(3){transform:rotate(-1.5deg)}
+.ingredients h3{font-size:19px;margin-top:16px}
+.ingredients p{color:var(--muted);font-size:16px}
+.shelf-h{font-size:24px;margin:38px 0 8px}
+.shelf{list-style:none;display:grid;grid-template-columns:1fr 1fr 1.25fr;margin:22px 0 14px;position:relative}
+.shelf::before{content:"";position:absolute;left:8px;right:8px;top:8px;height:4px;border-radius:4px;background:linear-gradient(to right,var(--manjal) 0 34%,var(--leaf) 34%)}
+.shelf li{position:relative;padding-top:28px}
+.shelf li::before{content:"";position:absolute;top:0;left:0;width:20px;height:20px;border-radius:50%;background:var(--mundu);border:4px solid var(--leaf)}
+.shelf li:first-child::before{border-color:var(--manjal-deep)}
+.shelf .day{display:block;font-family:var(--display);font-weight:800;font-size:17px;line-height:1.2;white-space:nowrap}
+.shelf .what{display:block;font-size:14.5px;color:var(--muted);line-height:1.35;padding-right:8px}
+
+/* batches */
+.batches{display:grid;gap:12px}
+.batch{display:block;width:100%;text-align:left;border:2px solid var(--line);border-radius:16px;padding:14px 16px;background:#fff;transition:border-color .15s,box-shadow .15s}
+.batch>span{display:block}
+.batch[aria-checked="true"]{border-color:var(--leaf);box-shadow:0 5px 0 var(--leaf)}
+.batch:disabled{opacity:.55;cursor:not-allowed}
+.batch-top{display:flex!important;justify-content:space-between;align-items:center;gap:8px}
+.batch-date{font-family:var(--display);font-weight:700;font-size:21px}
+.tag{font-size:13px;padding:3px 10px 2px;border-radius:999px;background:#F3E9CC;white-space:nowrap}
+.tag.ok{background:#DCEBD5;color:var(--leaf)}
+.batch-meta{font-size:15px;color:var(--muted);margin:2px 0 10px;line-height:1.45}
+.batch-count{font-size:14px;margin-top:6px}
+.batch-empty{color:var(--muted)}
+
+/* details */
+.field{margin-bottom:18px}
+.field label,.legend{display:block;font-family:var(--display);font-weight:700;font-size:17px;margin-bottom:6px}
+.opt{font-family:var(--body);font-weight:400;font-size:14px;color:var(--muted);margin-left:4px}
+.field input,.field textarea{width:100%;font:inherit;font-size:17px;padding:13px 14px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--leaf-dark);resize:vertical}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--leaf)}
+.hint{font-size:14px;color:var(--muted);margin-top:6px}
+.err{font-size:14px;color:var(--chuvappu);margin-top:6px;display:none}
+.field.invalid .err{display:block}
+.field.invalid input,.field.invalid textarea{border-color:var(--chuvappu)}
+.areas{display:flex;flex-wrap:wrap;gap:8px}
+.area{min-height:44px;padding:0 16px;border:2px solid var(--line);border-radius:999px;background:#fff;font-size:16px}
+.area[aria-checked="true"]{background:var(--leaf);border-color:var(--leaf);color:var(--mundu)}
+.field.invalid .area{border-color:var(--chuvappu)}
+.summary{border-top:2px dashed var(--line);margin-top:26px;padding-top:18px}
+.row{display:flex;justify-content:space-between;gap:12px;font-size:16px;padding:3px 0}
+.row.total{font-family:var(--display);font-weight:800;font-size:23px;border-top:1px solid var(--line);margin-top:10px;padding-top:12px}
+.pay-note{font-size:15px;color:var(--muted);margin:8px 0 18px;line-height:1.5}
+.empty{color:var(--muted);margin-bottom:18px}
+.privacy{font-size:14px;color:var(--muted);margin-top:10px;text-align:center}
+.form-error{color:var(--chuvappu);font-size:15px;margin-bottom:12px;display:none}
+.form-error.show{display:block}
+
+/* faq */
+.faq details{border-bottom:1px solid var(--line);padding:14px 0}
+.faq summary{font-family:var(--display);font-weight:700;font-size:18px;line-height:1.3;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:14px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:26px;line-height:.9;color:var(--leaf)}
+.faq details[open] summary::after{content:"\2212"}
+.faq details p{color:var(--muted);margin-top:8px;font-size:16px}
+
+/* footer */
+.foot{background:var(--leaf-dark);color:var(--leaf-soft);padding:34px 22px 40px;font-size:15px}
+.foot .brand-mark{color:var(--mundu)}
+.foot .brand-ml{color:var(--manjal)}
+.foot p{margin-top:12px}
+.foot a{color:var(--manjal)}
+
+/* sticky bar */
+.bar-sticky{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--leaf-dark);color:var(--mundu);padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;z-index:20;border-top:4px solid var(--kasavu)}
+.bar-info{flex:1;line-height:1.25;min-width:0}
+.bar-info strong{font-family:var(--display);font-size:18px;display:block}
+.bar-info span{font-size:14px;color:var(--leaf-soft)}
+.bar-sticky .btn{background:var(--manjal);color:var(--leaf-dark);min-height:48px;padding:0 20px;font-size:17px;white-space:nowrap}
+body.sheet-open .bar-sticky{display:none}
+
+/* confirmation sheet */
+.sheet-wrap{position:fixed;inset:0;background:rgba(19,48,32,.6);display:none;align-items:flex-end;justify-content:center;z-index:40}
+.sheet-wrap.open{display:flex}
+.sheet{background:var(--mundu);width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:28px 22px calc(22px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto;animation:up .35s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.stamp-big{display:inline-block;border:3px dashed var(--chuvappu);color:var(--chuvappu);font-family:var(--display);font-weight:800;font-size:26px;padding:6px 18px 2px;border-radius:12px;transform:rotate(-6deg);animation:stamp .45s cubic-bezier(.2,1.6,.4,1) .1s both}
+@keyframes stamp{from{transform:rotate(-6deg) scale(1.7);opacity:0}to{transform:rotate(-6deg) scale(1);opacity:1}}
+.sheet h2{font-size:28px;margin:18px 0 4px}
+.sheet h2:focus{outline:none}
+.sheet-id{color:var(--muted);font-size:15px;margin-bottom:14px}
+.sheet .steps{gap:14px;margin:18px 0 22px}
+.sheet .steps li{grid-template-columns:36px 1fr;gap:12px}
+.sheet .steps .n{width:36px;height:36px;font-size:18px}
+.sheet .steps p{font-size:15.5px;color:var(--leaf-dark);padding-top:5px}
+.sheet .btn-ghost{width:100%;margin-top:6px}
+
+@media (min-width:520px){.page{margin:28px auto;border-radius:26px;min-height:0}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<!-- shared drawings -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="chip" viewBox="-22 -22 44 44">
+      <ellipse rx="20" ry="18" fill="#F4C75A" stroke="#D39328" stroke-width="2"/>
+      <ellipse rx="11" ry="9.5" fill="none" stroke="#E2A93F" stroke-width="2"/>
+      <g fill="#B37A22"><circle cx="0" cy="-3" r="1.6"/><circle cx="-3" cy="2.2" r="1.6"/><circle cx="3" cy="2.2" r="1.6"/></g>
+    </symbol>
+    <symbol id="shark" viewBox="-20 -14 40 28">
+      <path d="M-17 9 C-17 -11 17 -11 17 9 Z" fill="#7A431F" stroke="#40210F" stroke-width="2"/>
+      <g fill="#F3E2B8"><circle cx="-6" cy="0" r="1.3"/><circle cx="4" cy="-3" r="1.1"/><circle cx="8" cy="4" r="1.2"/><circle cx="-10" cy="5" r="1"/></g>
+    </symbol>
+    <symbol id="chakka" viewBox="-24 -8 48 16">
+      <rect x="-22" y="-6" width="44" height="12" rx="6" fill="#E9A93B" stroke="#BD7B1C" stroke-width="2"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="page">
+
+  <header class="hero">
+    <div class="brand">
+      <span class="brand-mark" id="brand-mark">urali</span>
+      <span class="brand-ml" lang="ml">ഉരുളി</span>
+      <span class="brand-route">Thrissur to Bengaluru</span>
+    </div>
+
+    <h1>Kaya varuthathu, fried after you order it.</h1>
+    <p class="ml-line" lang="ml">നാട്ടിലെ അതേ രുചി</p>
+
+    <div class="hero-art">
+      <svg viewBox="0 0 400 250" role="img" aria-label="Banana chips frying in a bell-metal urali on a banana leaf">
+        <defs>
+          <linearGradient id="bell" x1="0" x2="1">
+            <stop offset="0" stop-color="#6E4516"/><stop offset=".42" stop-color="#C58E36"/>
+            <stop offset=".56" stop-color="#E6B55C"/><stop offset="1" stop-color="#7A4E1A"/>
+          </linearGradient>
+          <radialGradient id="oil" cx=".45" cy=".4" r=".7">
+            <stop offset="0" stop-color="#FBD76B"/><stop offset="1" stop-color="#DE9E28"/>
+          </radialGradient>
+        </defs>
+        <!-- banana leaf -->
+        <path d="M8 196 C70 50 250 8 396 52 C316 128 160 204 8 196 Z" fill="#2F6B3A"/>
+        <path d="M8 196 C140 140 280 92 396 52" stroke="#8DBF7A" stroke-width="3" fill="none"/>
+        <g stroke="#4F8A4A" stroke-width="2" fill="none" stroke-linecap="round">
+          <path d="M108 155 L140 110"/><path d="M208 118 L236 78"/><path d="M305 83 L330 52"/>
+          <path d="M108 155 L138 170"/><path d="M208 118 L240 140"/><path d="M305 83 L336 98"/>
+        </g>
+        <!-- urali -->
+        <ellipse cx="200" cy="222" rx="50" ry="9" fill="#5A3712"/>
+        <path d="M56 152 C66 236 334 236 344 152 Z" fill="url(#bell)"/>
+        <g fill="none" stroke="#8A5A1C" stroke-width="7"><circle cx="42" cy="156" r="15"/><circle cx="358" cy="156" r="15"/></g>
+        <ellipse cx="200" cy="152" rx="148" ry="30" fill="#9A6620"/>
+        <ellipse cx="200" cy="150" rx="141" ry="26" fill="#DDA646"/>
+        <ellipse cx="200" cy="154" rx="129" ry="21" fill="url(#oil)"/>
+        <!-- chips landing in the oil -->
+        <g transform="translate(118 157) scale(1 .55)"><g class="drop" style="animation-delay:.25s"><use href="#chip" x="-20" y="-20" width="40" height="40"/></g></g>
+        <g transform="translate(158 146) scale(1 .55)"><g class="drop" style="animation-delay:.4s"><use href="#chip" x="-20" y="-20" width="40" height="40"/></g></g>
+        <g transform="translate(198 161) scale(1 .55)"><g class="drop" style="animation-delay:.55s"><use href="#chip" x="-20" y="-20" width="40" height="40"/></g></g>
+        <g transform="translate(238 147) scale(1 .55)"><g class="drop" style="animation-delay:.7s"><use href="#chip" x="-20" y="-20" width="40" height="40"/></g></g>
+        <g transform="translate(276 159) scale(1 .55)"><g class="drop" style="animation-delay:.85s"><use href="#chip" x="-20" y="-20" width="40" height="40"/></g></g>
+        <g transform="translate(306 149) scale(1 .55)"><g class="drop" style="animation-delay:1s"><use href="#chip" x="-20" y="-20" width="40" height="40"/></g></g>
+        <!-- steam from the salt-water splash -->
+        <g stroke="#FFFEF8" stroke-width="4" stroke-linecap="round" fill="none">
+          <path class="steam" style="animation-delay:1.2s" d="M150 128 c-9 -12 9 -20 0 -34 c-7 -10 5 -17 1 -26"/>
+          <path class="steam" style="animation-delay:1.7s" d="M205 124 c-9 -12 9 -20 0 -34 c-7 -10 5 -17 1 -26"/>
+          <path class="steam" style="animation-delay:2.2s" d="M258 128 c-9 -12 9 -20 0 -34 c-7 -10 5 -17 1 -26"/>
+        </g>
+      </svg>
+    </div>
+
+    <p class="lede">A small farm-to-home run we've just started. Thrissur nendran, fried only in coconut oil in a heavy urali, one batch a week, and at your door in Kothanur, Horamavu, Ramamurthy Nagar or Byrathi 24 to 48 hours after frying.</p>
+
+    <div class="next-batch" id="next-batch" aria-live="polite"></div>
+
+    <div class="hero-cta">
+      <button class="btn btn-primary" data-act="goto" data-target="#boxes-sec">Reserve a box</button>
+      <button class="btn-ghost" data-act="goto" data-target="#how">How pre-orders work</button>
+    </div>
+  </header>
+
+  <div class="kasavu"></div>
+
+  <section class="sec about" id="about">
+    <h2>We've just started</h2>
+    <p class="intro">urali is a small farm-to-home initiative, from Thrissur to a few neighbourhoods in Bengaluru.</p>
+    <ol class="chain">
+      <li><span class="c-icon" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 36V18"/><path d="M20 21c-8-2-12-8-12-15 7 1 11 6 12 15z"/><path d="M20 24c7-3 11-9 11-16-7 2-10 7-11 16z"/></svg></span><span class="c-label">Thrissur farms</span></li>
+      <li><span class="c-icon" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M6 19h28c-1 8-7 13-14 13S7 27 6 19z"/><path d="M2 19h4M34 19h4"/><path d="M16 13c-2-2 2-4 0-7M24 13c-2-2 2-4 0-7"/></svg></span><span class="c-label">Our urali</span></li>
+      <li><span class="c-icon" aria-hidden="true"><svg viewBox="0 0 40 40"><rect x="5" y="13" width="28" height="15" rx="3"/><path d="M5 20h28"/><circle cx="12" cy="30" r="2.5"/><circle cx="26" cy="30" r="2.5"/></svg></span><span class="c-label">Night bus</span></li>
+      <li><span class="c-icon" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M6 19L20 8l14 11"/><path d="M10 17v15h20V17"/><path d="M17 32v-8h6v8"/></svg></span><span class="c-label">Your home</span></li>
+    </ol>
+    <p>Nendran is bought from farmers around Thrissur, fried by our partner kitchen, and brought straight to your door. There's no distributor, warehouse or shop in between. That's why your chips reach you within two days of frying, not weeks.</p>
+    <p class="quiet">We're new, so batches are small and we read every WhatsApp message ourselves. If something isn't right with your box, tell us and we'll make it right.</p>
+  </section>
+
+  <section class="sec" id="how">
+    <h2>Reserve now, pay when your batch is on</h2>
+    <p class="intro">We only fry what's been reserved. That's how every box reaches you within two days of frying.</p>
+    <ol class="steps">
+      <li><span class="n">1</span><div><h3>Reserve your boxes</h3><p>Pick a batch date up to three weeks ahead. You don't pay anything yet.</p></div></li>
+      <li><span class="n">2</span><div><h3>The batch fills up</h3><p>A batch goes ahead once <span class="js-target">40</span> boxes are reserved. You can see the count on this page.</p></div></li>
+      <li><span class="n">3</span><div><h3>Pay on WhatsApp</h3><p>When your batch is confirmed, we send you a payment link. Pay within 24 hours to keep your box.</p></div></li>
+      <li><span class="n">4</span><div><h3>Fried, packed, delivered</h3><p>Your chips are fried, packed the same day and delivered 24 to 48 hours later.</p></div></li>
+    </ol>
+  </section>
+
+  <section class="sec" id="boxes-sec">
+    <h2>The boxes</h2>
+    <p class="intro">Two you can reserve today, two more on the way. Tap a box to read its back.</p>
+    <div id="box-list"></div>
+  </section>
+
+  <section class="sec story" id="story">
+    <h2>How a batch is made</h2>
+    <p class="intro">The way it's done in Thrissur kitchens before every Onam, for a few more houses.</p>
+    <ol class="timeline">
+      <li>
+        <span class="t-icon" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M9 30c6 5 19 4 24-9 2-5 2-10 1-14"/><path d="M34 7l2-3"/><path d="M13 29c7 1 15-4 18-14"/></svg></span>
+        <div><h3>Green nendran from Thrissur</h3><p>Kerala's big plantain, bought green and firm. Ripe ones turn soft and sweet in the oil, so they stay out.</p></div>
+      </li>
+      <li>
+        <span class="t-icon" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M6 12h20l4 3-4 3H6z"/><circle cx="14" cy="29" r="5"/><circle cx="26" cy="31" r="4"/></svg></span>
+        <div><h3>Peeled and sliced by hand</h3><p>Sliced right over the urali, so every slice drops into hot oil the moment it's cut.</p></div>
+      </li>
+      <li>
+        <span class="t-icon" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M12 11h16v21a3 3 0 0 1-3 3H15a3 3 0 0 1-3-3z"/><path d="M16 6h8v5h-8z"/><path d="M20 17c-3 4-3 6 0 8 3-2 3-4 0-8z"/></svg></span>
+        <div><h3>Coconut oil, nothing else</h3><p>That's where the smell of kaya varuthathu comes from. You'll see the oil tin in the batch video we share on WhatsApp.</p></div>
+      </li>
+      <li>
+        <span class="t-icon" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M6 29c4-3 8 3 12 0s8 3 12 0 4 1 4 1"/><path d="M14 8v6M20 5v9M26 8v6"/></svg></span>
+        <div><h3>The salt-water hiss</h3><p>Near the end, a splash of salt and turmeric water goes into the oil. The hiss seasons every chip evenly and turns them deep gold.</p></div>
+      </li>
+      <li>
+        <span class="t-icon" aria-hidden="true"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="13" stroke-dasharray="4 3"/><path d="M14 20l4 4 8-8"/></svg></span>
+        <div><h3>Cooled, packed, dated</h3><p>The chips cool on wide trays and go into sealed pouches the same day. Every pouch is stamped with its fry date.</p></div>
+      </li>
+      <li>
+        <span class="t-icon" aria-hidden="true"><svg viewBox="0 0 40 40"><rect x="5" y="15" width="25" height="13" rx="3"/><path d="M5 21h25"/><circle cx="11" cy="30" r="2.5"/><circle cx="24" cy="30" r="2.5"/><path d="M31 5a5 5 0 1 0 4 8 6 6 0 0 1-4-8z"/></svg></span>
+        <div><h3>Overnight to Bengaluru</h3><p>The carton rides the night bus. We collect it in the morning and deliver across our four areas in one run.</p></div>
+      </li>
+    </ol>
+    <div class="pull">
+      <p>Chips that sit on a shelf lose their snap. So we don't keep stock. We fry what you reserve, and it leaves Thrissur that night.</p>
+      <p class="maker" id="maker"></p>
+    </div>
+  </section>
+
+  <div class="kasavu"></div>
+
+  <section class="sec" id="whats-in">
+    <h2>What goes in, and what doesn't</h2>
+    <p class="intro">Short ingredient lists, and the same rules for both boxes.</p>
+    <div class="claims">
+      <span class="claim good">Coconut oil only</span>
+      <span class="claim">No palm oil</span>
+      <span class="claim">No preservatives added</span>
+    </div>
+    <div class="ingredients">
+      <h3>Kaya varuthathu</h3>
+      <p>Nendran banana, coconut oil, salt, turmeric.</p>
+      <h3>Sharkara varatti</h3>
+      <p>Nendran banana, coconut oil, jaggery, dry ginger, jeera, cardamom.</p>
+    </div>
+
+    <h3 class="shelf-h">A short shelf life, on purpose</h3>
+    <p>With no preservatives added, these chips aren't made to sit in a warehouse or on a shop shelf. They're packed the day they're fried and reach you within two days, so nearly all their crunch is still ahead of them when you open the box.</p>
+    <ol class="shelf">
+      <li><span class="day">Day 0</span><span class="what">Fried and packed</span></li>
+      <li><span class="day">Day 1–2</span><span class="what">At your door</span></li>
+      <li><span class="day">By day 21</span><span class="what">Best eaten, pouch kept sealed</span></li>
+    </ol>
+    <p class="hint">Once opened, keep them in an airtight jar and finish within a few days. The fry date and best-before date are printed on every pouch.</p>
+  </section>
+
+  <section class="sec" id="batch-sec" style="padding-top:12px">
+    <h2>Pick your batch</h2>
+    <p class="intro" id="batch-intro">We fry once a week. Reserve up to three weeks ahead.</p>
+    <div class="batches" id="batch-list" role="radiogroup" aria-label="Batch date"></div>
+  </section>
+
+  <section class="sec" id="details-sec" style="padding-top:8px">
+    <h2>Where should it go?</h2>
+    <p class="intro">We use your WhatsApp number to confirm your batch and send the payment link.</p>
+
+    <div class="field" id="f-name">
+      <label for="name">Your name</label>
+      <input id="name" autocomplete="name">
+      <p class="err">Enter your name so we know who the box is for.</p>
+    </div>
+    <div class="field" id="f-phone">
+      <label for="phone">WhatsApp number</label>
+      <input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="98765 43210">
+      <p class="err">Enter a 10-digit mobile number that has WhatsApp.</p>
+    </div>
+    <div class="field" id="f-area">
+      <span class="legend" id="area-label">Area</span>
+      <div class="areas" id="area-list" role="radiogroup" aria-labelledby="area-label"></div>
+      <p class="hint">We deliver to these four areas for now.</p>
+      <p class="err">Choose your area.</p>
+    </div>
+    <div class="field" id="f-address">
+      <label for="address">Flat or house number, and a landmark</label>
+      <textarea id="address" rows="3" autocomplete="street-address" placeholder="B-204, Palm Grove Apartments, near the bus stop"></textarea>
+      <p class="err">Add your flat or house number and a landmark.</p>
+    </div>
+    <div class="field">
+      <label for="note">Anything we should know? <span class="opt">Optional</span></label>
+      <input id="note" placeholder="Call before coming, gate code, etc.">
+    </div>
+
+    <div class="summary" id="summary"></div>
+    <p class="form-error" id="form-error" role="alert"></p>
+    <button class="btn btn-primary btn-block" data-act="reserve">Reserve, pay later</button>
+    <p class="privacy">We use your name, number and address only to confirm and deliver your order.</p>
+  </section>
+
+  <section class="sec faq" id="faq" style="padding-top:12px">
+    <h2>Straight answers</h2>
+    <p class="intro">What people ask before they reserve.</p>
+    <details><summary>Why don't I pay when I reserve?</summary><p>A batch only goes ahead once <span class="js-target">40</span> boxes are reserved. Until then you haven't paid for anything, so there's nothing to refund if your plans change.</p></details>
+    <details><summary>What if my batch doesn't fill up?</summary><p>We message you before orders close. You can move your boxes to the next batch or cancel.</p></details>
+    <details><summary>Who's behind urali?</summary><p>A small team that has just started, working with a partner kitchen in Thrissur. We handle orders, pickup and delivery ourselves, which is why we only cover four areas for now.</p></details>
+    <details><summary>How long do I have to pay?</summary><p>24 hours from when we send the link. After that, your boxes go back into the batch for someone else.</p></details>
+    <details><summary>When will my box arrive?</summary><p>24 to 48 hours after frying. The date stamped on your pouch tells you exactly when your chips were fried.</p></details>
+    <details><summary>Will some chips break?</summary><p>A few, yes. They travel overnight in sealed pouches inside a box, but small breaks happen on the way.</p></details>
+    <details><summary>How long do they stay crisp?</summary><p>Keep the pouch sealed and finish it within three weeks of the fry date. Once it's open, move the chips to an airtight jar and finish them within a few days. There are no preservatives added, so they aren't meant to be stored for long.</p></details>
+    <details><summary>Is there any palm oil in them?</summary><p>No. Both boxes are fried only in coconut oil, including the sharkara varatti.</p></details>
+    <details><summary>I live outside these four areas.</summary><p>We're starting with Kothanur, Horamavu, Ramamurthy Nagar and Byrathi so one delivery run covers everyone. <a class="link" id="wa-area" target="_blank" rel="noopener">Message us on WhatsApp</a> and we'll tell you when we reach your area.</p></details>
+  </section>
+
+  <footer class="foot">
+    <div class="brand"><span class="brand-mark">urali</span><span class="brand-ml" lang="ml">ഉരുളി</span></div>
+    <p>A farm-to-home initiative, just started. Fried in Thrissur, delivered in Kothanur, Horamavu, Ramamurthy Nagar and Byrathi.</p>
+    <p id="fssai"></p>
+    <p><a id="wa-foot" target="_blank" rel="noopener">WhatsApp us</a></p>
+  </footer>
+</div>
+
+<div class="bar-sticky" id="bar">
+  <div class="bar-info"><strong id="bar-title">Boxes from ₹399</strong><span id="bar-sub">Nothing to pay today</span></div>
+  <button class="btn" id="bar-btn" data-act="bar">Choose a box</button>
+</div>
+
+<div class="sheet-wrap" id="sheet-wrap">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <span class="stamp-big" aria-hidden="true">Reserved</span>
+    <h2 id="sheet-title" tabindex="-1"></h2>
+    <p class="sheet-id" id="sheet-id"></p>
+    <div id="sheet-items"></div>
+    <ol class="steps" id="sheet-steps"></ol>
+    <a class="btn btn-primary btn-block" id="sheet-wa" target="_blank" rel="noopener">Send it on WhatsApp</a>
+    <button class="btn-ghost" data-act="close-sheet">Back to the page</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   EDIT THESE BEFORE GOING LIVE
+   ============================================================ */
+const CONFIG = {
+  whatsappNumber: '917996946363',   // your WhatsApp Business number: country code, no + or spaces
+  fssai: 'FSSAI reg. no. to be added', // replace with your registration number
+  makerLine: 'Fried by our partner kitchen in Thrissur.', // use the unit's real name once agreed with them
+  targetBoxes: 40,        // batch goes ahead at this many boxes
+  capacityBoxes: 60,      // most boxes one batch can take
+  fryWeekday: 3,          // 0 = Sunday ... 3 = Wednesday
+  cutoffDaysBefore: 3,    // orders close this many days before frying (3 = Sunday)
+  cutoffHour: 21,         // 24h clock, 21 = 9 pm
+  batchesShown: 3,        // about three weeks ahead
+  deliveryFee: 40,
+  freeDeliveryAbove: 599,
+  maxPerBox: 5,
+  // Real reserved boxes per upcoming batch. Starts at zero; update by hand or connect a backend.
+  demoReserved: [0, 0, 0]
+};
+
+const AREAS = ['Kothanur', 'Horamavu', 'Ramamurthy Nagar', 'Byrathi'];
+
+const PRODUCTS = [
+  { id:'classic', status:'open', art:'box', name:'Kaya Varuthathu', ml:'കായ വറുത്തത്', price:399,
+    size:'500 g of salted nendran chips', stage:'#F6D27A',
+    backTitle:'On the back of this box',
+    back:[
+      'Green nendran from Thrissur, peeled by hand on the morning of your batch.',
+      'Sliced over the urali, seasoned with a splash of salt and turmeric water.',
+      'Coconut oil only. No palm oil, no preservatives added. Fry date stamped on the pouch.'
+    ] },
+  { id:'duo', status:'open', art:'box', name:'Madhuram Duo', ml:'മധുരം', price:449,
+    size:'250 g kaya varuthathu and 250 g sharkara varatti', stage:'#E8C7A0',
+    backTitle:'Same batch, two ways',
+    back:[
+      'Half the chips are salted.',
+      'The other half are cut thick, fried, then tossed in jaggery syrup with dry ginger, jeera and cardamom until the coating sets.',
+      'The one that disappears first from the sadya leaf.'
+    ] },
+  { id:'tin', status:'soon', art:'tin', name:'Palaharam Tin', ml:'പലഹാരം',
+    size:'Chips, sharkara varatti, achappam, kuzhalappam and halwa', stage:'#E4DED0',
+    backTitle:'The tin on top of the fridge',
+    back:[
+      'The one that was filled before guests came home.',
+      'Five evening snacks in one tin, each packed separately so the achappam stays whole.'
+    ] },
+  { id:'chakka', status:'soon', art:'pouch', name:'Chakka Varuthathu', ml:'ചക്ക വറുത്തത്',
+    size:'Jackfruit chips, when the season comes back', stage:'#EADFC6',
+    backTitle:'Only in season',
+    back:[
+      'Firm varikka jackfruit, cut into strips and fried in coconut oil.',
+      'Available only while the jackfruits last.'
+    ] }
+];
+
+/* ============================================================ */
+
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const rupee = n => '₹' + n.toLocaleString('en-IN');
+const fmt = d => `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+const dayMonth = d => `${d.getDate()} ${MONTHS[d.getMonth()]}`;
+const fmtRange = (a, b) => a.getMonth() === b.getMonth()
+  ? `${DAYS[a.getDay()]} ${a.getDate()} to ${DAYS[b.getDay()]} ${b.getDate()} ${MONTHS[b.getMonth()]}`
+  : `${fmt(a)} to ${fmt(b)}`;
+const hourText = h => `${h % 12 === 0 ? 12 : h % 12} ${h >= 12 ? 'pm' : 'am'}`;
+const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const waLink = text => `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const state = { qty: { classic: 0, duo: 0 }, batchId: null, area: null };
+
+/* ---------- batches ---------- */
+function upcomingBatches(now = new Date()) {
+  const out = [];
+  const start = new Date(now); start.setHours(0,0,0,0);
+  for (let i = 0; i < 42 && out.length < CONFIG.batchesShown; i++) {
+    const fry = new Date(start); fry.setDate(start.getDate() + i);
+    if (fry.getDay() !== CONFIG.fryWeekday) continue;
+    const cutoff = new Date(fry); cutoff.setDate(fry.getDate() - CONFIG.cutoffDaysBefore); cutoff.setHours(CONFIG.cutoffHour,0,0,0);
+    if (now >= cutoff) continue;
+    const dFrom = new Date(fry); dFrom.setDate(fry.getDate() + 1);
+    const dTo = new Date(fry); dTo.setDate(fry.getDate() + 2);
+    out.push({ id: iso(fry), fry, cutoff, dFrom, dTo, reserved: CONFIG.demoReserved[out.length] ?? 0 });
+  }
+  return out;
+}
+const batches = upcomingBatches();
+const batchById = id => batches.find(b => b.id === id);
+const isFull = b => b.reserved >= CONFIG.capacityBoxes;
+const isConfirmed = b => b.reserved >= CONFIG.targetBoxes;
+
+/* ---------- drawings ---------- */
+function chipsFill() {
+  const pts = [[60,76,-10],[94,70,20],[128,78,5],[162,72,-25],[74,106,15],[110,100,-5],[146,108,30],[178,104,0],[56,134,10],[92,132,-20],[128,136,8],[166,134,-12]];
+  return pts.map(([x,y,r]) => `<use href="#chip" x="-20" y="-20" width="40" height="40" transform="translate(${x} ${y}) rotate(${r})"/>`).join('');
+}
+function duoFill() {
+  const chips = [[58,76,-10],[92,72,20],[66,106,15],[100,104,-5],[58,134,10],[94,134,-20]]
+    .map(([x,y,r]) => `<use href="#chip" x="-18" y="-18" width="36" height="36" transform="translate(${x} ${y}) rotate(${r})"/>`).join('');
+  const pieces = [[134,74,-8],[168,80,14],[132,104,20],[166,110,-12],[136,134,6],[170,136,-20]]
+    .map(([x,y,r]) => `<use href="#shark" x="-18" y="-12" width="36" height="24" transform="translate(${x} ${y}) rotate(${r})"/>`).join('');
+  return `<rect x="114" y="58" width="70" height="84" fill="#5B3A1E"/>${chips}${pieces}<rect x="113" y="58" width="2" height="84" fill="#C9A227"/>`;
+}
+const ML_FONT = `'Baloo Chettan 2','Noto Sans Malayalam',sans-serif`;
+const ART = {
+  box(p, stamp) {
+    const cid = 'clip-' + p.id;
+    const inner = p.id === 'duo' ? duoFill() : chipsFill();
+    return `<svg viewBox="0 0 260 230" aria-hidden="true" focusable="false">
+      <defs><clipPath id="${cid}"><rect x="44" y="58" width="140" height="84" rx="8"/></clipPath></defs>
+      <ellipse cx="124" cy="219" rx="98" ry="9" fill="rgba(19,48,32,.16)"/>
+      <path d="M200 44 L228 28 L228 196 L200 212 Z" fill="#EAE1C6"/>
+      <path d="M28 44 L56 28 L228 28 L200 44 Z" fill="#F8F3E4"/>
+      <rect x="28" y="44" width="172" height="168" fill="#FFFEF8" stroke="#DCCFAB" stroke-width="1.5"/>
+      <rect x="44" y="58" width="140" height="84" rx="8" fill="#2F6B3A"/>
+      <g clip-path="url(#${cid})">${inner}</g>
+      <rect x="44" y="58" width="140" height="84" rx="8" fill="none" stroke="#1E4D2B" stroke-width="2"/>
+      <text x="114" y="171" text-anchor="middle" font-family="${ML_FONT}" font-weight="700" font-size="19" fill="#1E4D2B">${p.ml}</text>
+      <rect x="28" y="181" width="172" height="2" fill="#C9A227"/>
+      <rect x="28" y="186" width="172" height="11" fill="#C9A227"/>
+      <rect x="28" y="200" width="172" height="2" fill="#C9A227"/>
+      <path d="M200 181 L228 165 L228 167 L200 183 Z" fill="#B08C1E"/>
+      <path d="M200 186 L228 170 L228 181 L200 197 Z" fill="#B08C1E"/>
+      <path d="M200 200 L228 184 L228 186 L200 202 Z" fill="#B08C1E"/>
+      ${stamp ? `<g transform="translate(182 64) rotate(-12)">
+        <circle r="22" fill="#FFFEF8" stroke="#B3261E" stroke-width="2" stroke-dasharray="4 2.5"/>
+        <text y="-4" text-anchor="middle" font-size="8" fill="#B3261E" font-family="'Source Serif 4',Georgia,serif" font-style="italic">fried on</text>
+        <text y="9" text-anchor="middle" font-size="10.5" font-weight="700" fill="#B3261E" font-family="${ML_FONT}">${stamp}</text>
+      </g>` : ''}
+    </svg>`;
+  },
+  tin(p) {
+    return `<svg viewBox="0 0 260 230" aria-hidden="true" focusable="false">
+      <defs><linearGradient id="tin-g" x1="0" x2="1"><stop offset="0" stop-color="#8C6A2C"/><stop offset=".45" stop-color="#D9B866"/><stop offset=".6" stop-color="#E8CF8A"/><stop offset="1" stop-color="#8C6A2C"/></linearGradient></defs>
+      <ellipse cx="130" cy="217" rx="90" ry="9" fill="rgba(19,48,32,.16)"/>
+      <path d="M56 62 V200 A74 14 0 0 0 204 200 V62 Z" fill="url(#tin-g)"/>
+      <rect x="56" y="112" width="148" height="58" fill="#FFFEF8"/>
+      <rect x="56" y="116" width="148" height="2" fill="#C9A227"/>
+      <rect x="56" y="159" width="148" height="7" fill="#C9A227"/>
+      <text x="130" y="149" text-anchor="middle" font-family="${ML_FONT}" font-weight="700" font-size="22" fill="#1E4D2B">${p.ml}</text>
+      <ellipse cx="130" cy="62" rx="76" ry="17" fill="#E3C47C" stroke="#9C7A30" stroke-width="2"/>
+      <ellipse cx="130" cy="59" rx="58" ry="11" fill="#CDA64A"/>
+      <use href="#chip" x="-16" y="-16" width="32" height="32" transform="translate(108 46) rotate(-20)"/>
+      <use href="#shark" x="-15" y="-10" width="30" height="20" transform="translate(152 46) rotate(15)"/>
+    </svg>`;
+  },
+  pouch(p) {
+    const strips = [[100,98,-20],[132,92,10],[160,102,-8],[112,120,25],[148,121,-15]]
+      .map(([x,y,r]) => `<use href="#chakka" x="-22" y="-7" width="44" height="14" transform="translate(${x} ${y}) rotate(${r})"/>`).join('');
+    return `<svg viewBox="0 0 260 230" aria-hidden="true" focusable="false">
+      <defs><clipPath id="clip-pouch"><ellipse cx="130" cy="108" rx="54" ry="34"/></clipPath></defs>
+      <ellipse cx="130" cy="218" rx="80" ry="9" fill="rgba(19,48,32,.16)"/>
+      <path d="M66 34 H194 L202 196 Q130 214 58 196 Z" fill="#FFFEF8" stroke="#DCCFAB" stroke-width="1.5"/>
+      <rect x="66" y="34" width="128" height="10" fill="#EAE1C6"/>
+      <path d="M68 54 H192" stroke="#DCCFAB" stroke-width="2" stroke-dasharray="4 3"/>
+      <ellipse cx="130" cy="108" rx="54" ry="34" fill="#2F6B3A"/>
+      <g clip-path="url(#clip-pouch)">${strips}</g>
+      <ellipse cx="130" cy="108" rx="54" ry="34" fill="none" stroke="#1E4D2B" stroke-width="2"/>
+      <text x="130" y="167" text-anchor="middle" font-family="${ML_FONT}" font-weight="700" font-size="17" fill="#1E4D2B">${p.ml}</text>
+      <path d="M61 178 H199" stroke="#C9A227" stroke-width="2"/>
+      <path d="M60 185 H200" stroke="#C9A227" stroke-width="8"/>
+    </svg>`;
+  }
+};
+
+/* ---------- render ---------- */
+function renderHero() {
+  const el = $('#next-batch');
+  const b = batches.find(x => !isFull(x));
+  if (!b) { el.innerHTML = `<p class="nb-count">New batch dates open soon. Message us on WhatsApp to hear first.</p>`; return; }
+  const pct = Math.min(100, Math.round(b.reserved / CONFIG.targetBoxes * 100));
+  const count = isConfirmed(b)
+    ? `Confirmed. ${CONFIG.capacityBoxes - b.reserved} boxes left in this batch.`
+    : `${b.reserved} of ${CONFIG.targetBoxes} boxes reserved. ${CONFIG.targetBoxes - b.reserved} more and it goes ahead.`;
+  el.innerHTML = `
+    <div class="nb-top"><span class="nb-label">Next batch fries</span><strong>${fmt(b.fry)}</strong></div>
+    <span class="bar" role="progressbar" aria-label="Boxes reserved for this batch" aria-valuemin="0" aria-valuemax="${CONFIG.targetBoxes}" aria-valuenow="${Math.min(b.reserved, CONFIG.targetBoxes)}"><i></i></span>
+    <p class="nb-count">${count}</p>
+    <p class="nb-cut">Orders close ${fmt(b.cutoff)}, ${hourText(CONFIG.cutoffHour)}</p>`;
+  const fill = $('.bar i', el);
+  requestAnimationFrame(() => requestAnimationFrame(() => { fill.style.width = pct + '%'; }));
+}
+
+function renderBoxes() {
+  const stamp = batches[0] ? dayMonth(batches[0].fry) : '';
+  $('#box-list').innerHTML = PRODUCTS.map(p => `
+    <article class="box ${p.status === 'soon' ? 'soon' : ''}">
+      <div class="flip" data-flip="${p.id}">
+        <div class="flip-inner">
+          <div class="face face-front stage" style="--stage:${p.stage}">
+            ${p.status === 'soon' ? '<span class="ribbon">Coming soon</span>' : ''}
+            ${ART[p.art](p, stamp)}
+          </div>
+          <div class="face face-back" aria-hidden="true">
+            <p class="back-ml" lang="ml">${p.ml}</p>
+            <h4>${p.backTitle}</h4>
+            ${p.back.map(t => `<p>${t}</p>`).join('')}
+            <div class="back-kasavu"></div>
+          </div>
+        </div>
+      </div>
+      <div class="box-head"><h3>${p.name}</h3>${p.price ? `<span class="price">${rupee(p.price)}</span>` : ''}</div>
+      <p class="box-sub">${p.size}</p>
+      <div class="box-actions">
+        <button class="flip-btn" data-act="flip" data-id="${p.id}" aria-pressed="false">Read the back of the box</button>
+        <div id="qty-${p.id}"></div>
+      </div>
+    </article>`).join('');
+  PRODUCTS.forEach(p => renderQty(p.id));
+}
+
+function renderQty(id, focusAct) {
+  const p = PRODUCTS.find(x => x.id === id);
+  const el = $('#qty-' + id);
+  if (p.status === 'soon') {
+    el.innerHTML = `<a class="btn btn-line" href="${waLink(`Hi, please tell me when the ${p.name} is ready.`)}" target="_blank" rel="noopener">Tell me when it's ready</a>`;
+    return;
+  }
+  const q = state.qty[id];
+  el.innerHTML = q === 0
+    ? `<button class="btn btn-add" data-act="inc" data-id="${id}">Add box</button>`
+    : `<div class="stepper" role="group" aria-label="${p.name} boxes">
+         <button data-act="dec" data-id="${id}" aria-label="One less ${p.name}">&minus;</button>
+         <output aria-live="polite">${q}</output>
+         <button data-act="inc" data-id="${id}" aria-label="One more ${p.name}" ${q >= CONFIG.maxPerBox ? 'disabled' : ''}>+</button>
+       </div>`;
+  if (focusAct) {
+    const target = $(`[data-act="${focusAct}"]`, el) || $('[data-act]', el);
+    if (target && !target.disabled) target.focus();
+  }
+}
+
+function renderBatches() {
+  const list = $('#batch-list');
+  $('#batch-intro').textContent = `We fry every ${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][CONFIG.fryWeekday]}. Reserve up to three weeks ahead.`;
+  if (!batches.length) { list.innerHTML = `<p class="batch-empty">New batch dates open soon.</p>`; return; }
+  list.innerHTML = batches.map(b => {
+    const pct = Math.min(100, Math.round(b.reserved / CONFIG.targetBoxes * 100));
+    const tag = isFull(b) ? '<span class="tag">Full</span>' : isConfirmed(b) ? '<span class="tag ok">Confirmed</span>' : '<span class="tag">Filling up</span>';
+    const count = isFull(b) ? 'This batch is full.'
+      : isConfirmed(b) ? `${CONFIG.capacityBoxes - b.reserved} boxes left.`
+      : `${b.reserved} of ${CONFIG.targetBoxes} reserved, ${CONFIG.targetBoxes - b.reserved} more to go ahead.`;
+    return `<button class="batch" role="radio" aria-checked="${state.batchId === b.id}" data-act="batch" data-id="${b.id}" ${isFull(b) ? 'disabled' : ''}>
+      <span class="batch-top"><span class="batch-date">Fried ${fmt(b.fry)}</span>${tag}</span>
+      <span class="batch-meta">At your door ${fmtRange(b.dFrom, b.dTo)}. Orders close ${fmt(b.cutoff)}, ${hourText(CONFIG.cutoffHour)}.</span>
+      <span class="bar"><i style="width:${pct}%"></i></span>
+      <span class="batch-count">${count}</span>
+    </button>`;
+  }).join('');
+}
+
+function renderAreas() {
+  $('#area-list').innerHTML = AREAS.map(a =>
+    `<button class="area" role="radio" aria-checked="${state.area === a}" data-act="area" data-id="${a}">${a}</button>`).join('');
+}
+
+function totals() {
+  const items = PRODUCTS.filter(p => p.status === 'open' && state.qty[p.id] > 0)
+    .map(p => ({ id: p.id, name: p.name, qty: state.qty[p.id], price: p.price, line: p.price * state.qty[p.id] }));
+  const subtotal = items.reduce((s, i) => s + i.line, 0);
+  const delivery = subtotal === 0 || subtotal >= CONFIG.freeDeliveryAbove ? 0 : CONFIG.deliveryFee;
+  return { items, subtotal, delivery, total: subtotal + delivery, boxes: items.reduce((s, i) => s + i.qty, 0) };
+}
+
+function renderSummary() {
+  const t = totals();
+  const b = batchById(state.batchId);
+  const el = $('#summary');
+  if (t.boxes === 0) {
+    el.innerHTML = `<p class="empty">No boxes added yet. <button class="link" data-act="goto" data-target="#boxes-sec">Choose a box</button> to see your total.</p>`;
+    return;
+  }
+  el.innerHTML = `
+    ${t.items.map(i => `<div class="row"><span>${i.name} &times; ${i.qty}</span><span>${rupee(i.line)}</span></div>`).join('')}
+    <div class="row"><span>Delivery</span><span>${t.delivery === 0 ? 'Free' : rupee(t.delivery)}</span></div>
+    ${t.delivery > 0 ? `<p class="hint">Add ${rupee(CONFIG.freeDeliveryAbove - t.subtotal)} more for free delivery.</p>` : ''}
+    <div class="row total"><span>Pay later</span><span>${rupee(t.total)}</span></div>
+    <p class="pay-note">${b ? `For the batch fried ${fmt(b.fry)}. ` : ''}You pay only when your batch is confirmed, through a link we send on WhatsApp.</p>`;
+}
+
+function updateBar() {
+  const t = totals();
+  const b = batchById(state.batchId);
+  $('#bar-title').textContent = t.boxes === 0 ? 'Boxes from ₹399' : `${t.boxes} ${t.boxes === 1 ? 'box' : 'boxes'}, ${rupee(t.total)}`;
+  $('#bar-sub').textContent = b ? `Fried ${fmt(b.fry)}, pay later` : 'Nothing to pay today';
+  const step = t.boxes === 0 ? 'boxes' : !b ? 'batch' : 'reserve';
+  const btn = $('#bar-btn');
+  btn.dataset.step = step;
+  btn.textContent = step === 'boxes' ? 'Choose a box' : step === 'batch' ? 'Pick a batch' : 'Reserve, pay later';
+}
+
+function refresh() { renderSummary(); updateBar(); }
+
+/* ---------- actions ---------- */
+function goTo(sel) { const el = $(sel); if (el) el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }); }
+
+function toggleFlip(id) {
+  const f = $(`[data-flip="${id}"]`);
+  const btn = $(`.flip-btn[data-id="${id}"]`);
+  const on = !f.classList.contains('is-flipped');
+  f.classList.toggle('is-flipped', on);
+  btn.setAttribute('aria-pressed', String(on));
+  btn.textContent = on ? 'See the front of the box' : 'Read the back of the box';
+  $('.face-front', f).setAttribute('aria-hidden', String(on));
+  $('.face-back', f).setAttribute('aria-hidden', String(!on));
+}
+
+function setInvalid(id, bad) { $('#' + id).classList.toggle('invalid', bad); }
+
+function normPhone(v) {
+  let d = v.replace(/\D/g, '');
+  if (d.length === 12 && d.startsWith('91')) d = d.slice(2);
+  if (d.length === 11 && d.startsWith('0')) d = d.slice(1);
+  return /^[6-9]\d{9}$/.test(d) ? d : null;
+}
+
+function showFormError(msg) { const e = $('#form-error'); e.textContent = msg; e.classList.toggle('show', !!msg); }
+
+// Connect this to where you keep reservations (Google Sheet via Apps Script, Firestore, etc.).
+// For now it only logs; the WhatsApp button on the confirmation sends the order to you.
+async function submitReservation(order) {
+  console.log('Reservation', order);
+}
+
+function reserve() {
+  showFormError('');
+  const t = totals();
+  const b = batchById(state.batchId);
+  if (t.boxes === 0) { showFormError('Add at least one box.'); goTo('#boxes-sec'); return; }
+  if (!b) { showFormError('Pick a batch date.'); goTo('#batch-sec'); return; }
+  if (t.boxes > CONFIG.capacityBoxes - b.reserved) {
+    showFormError(`Only ${CONFIG.capacityBoxes - b.reserved} boxes are left in this batch. Pick another date or reserve fewer boxes.`);
+    goTo('#batch-sec'); return;
+  }
+
+  const name = $('#name').value.trim();
+  const phone = normPhone($('#phone').value);
+  const address = $('#address').value.trim();
+  const checks = [['f-name', name.length >= 2], ['f-phone', !!phone], ['f-area', !!state.area], ['f-address', address.length >= 8]];
+  checks.forEach(([id, ok]) => setInvalid(id, !ok));
+  const firstBad = checks.find(([, ok]) => !ok);
+  if (firstBad) {
+    const field = $('#' + firstBad[0]);
+    field.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+    const input = $('input, textarea, button', field);
+    if (input) input.focus({ preventScroll: true });
+    return;
+  }
+
+  const order = {
+    id: 'URL-' + Math.floor(1000 + Math.random() * 9000),
+    createdAt: new Date().toISOString(),
+    batchFryDate: b.id,
+    items: t.items.map(({ name, qty, line }) => ({ name, qty, line })),
+    subtotal: t.subtotal, delivery: t.delivery, total: t.total,
+    name, phone, area: state.area, address, note: $('#note').value.trim()
+  };
+  const wasConfirmed = isConfirmed(b);
+  submitReservation(order);
+  b.reserved += t.boxes;
+  openSheet(order, b, wasConfirmed);
+
+  state.qty = { classic: 0, duo: 0 };
+  state.batchId = null;
+  PRODUCTS.forEach(p => renderQty(p.id));
+  renderHero(); renderBatches(); refresh();
+}
+
+function openSheet(order, b, wasConfirmed) {
+  $('#sheet-title').textContent = `You're on the ${fmt(b.fry)} batch`;
+  $('#sheet-id').textContent = `Reservation ${order.id}. Nothing to pay today.`;
+  $('#sheet-items').innerHTML = order.items.map(i => `<div class="row"><span>${i.name} &times; ${i.qty}</span><span>${rupee(i.line)}</span></div>`).join('')
+    + `<div class="row"><span>Delivery</span><span>${order.delivery ? rupee(order.delivery) : 'Free'}</span></div>`
+    + `<div class="row total"><span>Pay later</span><span>${rupee(order.total)}</span></div>`;
+  const payStep = wasConfirmed
+    ? 'This batch is already confirmed, so we send your payment link as soon as we get your message.'
+    : `When the batch reaches ${CONFIG.targetBoxes} boxes, we send your payment link. Pay within 24 hours to keep your box.`;
+  $('#sheet-steps').innerHTML = [
+    'Send us your reservation on WhatsApp so it\u2019s on our list.',
+    payStep,
+    `Chips are fried ${fmt(b.fry)} and reach you ${fmtRange(b.dFrom, b.dTo)}.`
+  ].map((s, i) => `<li><span class="n">${i + 1}</span><p>${s}</p></li>`).join('');
+  const msg = [
+    `New reservation ${order.id}`,
+    `Batch: fried ${fmt(b.fry)}`,
+    ...order.items.map(i => `${i.name} x ${i.qty}: ${rupee(i.line)}`),
+    `Delivery: ${order.delivery ? rupee(order.delivery) : 'Free'}`,
+    `Total (pay later): ${rupee(order.total)}`,
+    `Name: ${order.name}`, `Phone: ${order.phone}`, `Area: ${order.area}`, `Address: ${order.address}`,
+    order.note ? `Note: ${order.note}` : ''
+  ].filter(Boolean).join('\n');
+  $('#sheet-wa').href = waLink(msg);
+  $('#sheet-wrap').classList.add('open');
+  document.body.classList.add('sheet-open');
+  $('#sheet-title').focus();
+}
+
+function closeSheet() {
+  $('#sheet-wrap').classList.remove('open');
+  document.body.classList.remove('sheet-open');
+  ['name','phone','address','note'].forEach(id => { $('#' + id).value = ''; });
+  state.area = null; renderAreas();
+  goTo('.hero');
+}
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-act]');
+  if (!t) {
+    const f = e.target.closest('.flip');
+    if (f) toggleFlip(f.dataset.flip);
+    if (e.target === $('#sheet-wrap')) closeSheet();
+    return;
+  }
+  const { act, id } = t.dataset;
+  switch (act) {
+    case 'goto': goTo(t.dataset.target); break;
+    case 'flip': toggleFlip(id); break;
+    case 'inc':
+      state.qty[id] = Math.min(CONFIG.maxPerBox, state.qty[id] + 1);
+      renderQty(id, 'inc'); refresh(); showFormError(''); break;
+    case 'dec':
+      state.qty[id] = Math.max(0, state.qty[id] - 1);
+      renderQty(id, state.qty[id] === 0 ? 'inc' : 'dec'); refresh(); break;
+    case 'batch':
+      state.batchId = id; renderBatches(); refresh(); showFormError('');
+      $(`.batch[data-id="${id}"]`).focus(); break;
+    case 'area':
+      state.area = id; renderAreas(); setInvalid('f-area', false);
+      $(`.area[data-id="${id}"]`).focus(); break;
+    case 'reserve': reserve(); break;
+    case 'bar': {
+      const step = t.dataset.step;
+      if (step === 'boxes') goTo('#boxes-sec');
+      else if (step === 'batch') goTo('#batch-sec');
+      else if (!$('#name').value.trim()) { goTo('#details-sec'); $('#name').focus({ preventScroll: true }); }
+      else reserve();
+      break;
+    }
+    case 'close-sheet': closeSheet(); break;
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && $('#sheet-wrap').classList.contains('open')) closeSheet();
+});
+['name','phone','address'].forEach(id => $('#' + id).addEventListener('input', () => setInvalid('f-' + id, false)));
+
+/* ---------- init ---------- */
+$('#maker').textContent = CONFIG.makerLine;
+$('#fssai').textContent = CONFIG.fssai;
+$('#wa-foot').href = waLink('Hi, I have a question about urali chips.');
+$('#wa-area').href = waLink('Hi, do you deliver to my area? I live in ');
+$$('.js-target').forEach(el => { el.textContent = CONFIG.targetBoxes; });
+renderHero(); renderBoxes(); renderBatches(); renderAreas(); refresh();
+</script>
+</body>
+</html>
