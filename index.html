@@ -195,6 +195,7 @@ h1,h2,h3,h4{font-family:var(--display);font-weight:800;line-height:1.08;letter-s
 .row.total{font-family:var(--display);font-weight:800;font-size:23px;border-top:1px solid var(--line);margin-top:10px;padding-top:12px}
 .pay-note{font-size:15px;color:var(--muted);margin:8px 0 18px;line-height:1.5}
 .empty{color:var(--muted);margin-bottom:18px}
+.hp{position:absolute!important;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
 .privacy{font-size:14px;color:var(--muted);margin-top:10px;text-align:center}
 .form-error{color:var(--chuvappu);font-size:15px;margin-bottom:12px;display:none}
 .form-error.show{display:block}
@@ -456,9 +457,13 @@ body.sheet-open .bar-sticky{display:none}
     </div>
 
     <div class="summary" id="summary"></div>
+    <div class="hp" aria-hidden="true">
+      <label for="leave_empty">Leave this field empty</label>
+      <input id="leave_empty" name="leave_empty" type="text" tabindex="-1" autocomplete="off">
+    </div>
     <p class="form-error" id="form-error" role="alert"></p>
     <button class="btn btn-primary btn-block" data-act="reserve">Reserve, pay later</button>
-    <p class="privacy">We use your name, number and address only to confirm and deliver your order.</p>
+    <p class="privacy">We use your name, number and address only to confirm and deliver your order. We also keep basic visit details, like your device, IP address and how you found us, to stop fake orders and improve this page.</p>
   </section>
 
   <section class="sec faq" id="faq" style="padding-top:12px">
@@ -576,6 +581,49 @@ const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-$
 const waLink = text => `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/* ---------- first-party analytics (no third-party trackers) ---------- */
+const PAGE_T0 = Date.now();
+const SESSION_ID = (() => {
+  try {
+    let v = sessionStorage.getItem('urali_sid');
+    if (!v) {
+      v = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Math.random().toString(36).slice(2) + Date.now().toString(36));
+      sessionStorage.setItem('urali_sid', v);
+    }
+    return v;
+  } catch (e) {
+    return 'nosession-' + Math.random().toString(36).slice(2, 12);
+  }
+})();
+const UTM = (() => {
+  const q = new URLSearchParams(location.search), o = {};
+  ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'ref'].forEach(k => {
+    const v = q.get(k); if (v) o[k.replace('utm_', '')] = v.slice(0, 80);
+  });
+  return Object.keys(o).length ? o : null;
+})();
+const REFERRER = (() => {
+  try {
+    if (!document.referrer) return null;
+    const r = new URL(document.referrer);
+    return r.host === location.host ? null : (r.origin + r.pathname).slice(0, 300);
+  } catch (e) { return null; }
+})();
+function clientMeta() {
+  let tz = '';
+  try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (e) {}
+  return {
+    session_id: SESSION_ID,
+    device: window.matchMedia('(pointer: coarse)').matches ? 'mobile' : 'desktop',
+    screen: `${screen.width}x${screen.height}`,
+    viewport: `${innerWidth}x${innerHeight}`,
+    lang: navigator.language || '',
+    tz,
+    time_on_page_ms: Date.now() - PAGE_T0,
+    landing: location.pathname
+  };
+}
+
 const state = { qty: { classic: 0, duo: 0 }, batchId: null, area: null };
 
 /* ---------- batches ---------- */
@@ -604,6 +652,17 @@ const parseDay = s => { const [y, m, d] = s.split('-').map(Number); return new D
 
 function sbHeaders() {
   return { apikey: CONFIG.supabaseKey, 'Content-Type': 'application/json' };
+}
+
+function track(event, props = {}) {
+  if (!BACKEND) return;
+  try {
+    fetch(`${CONFIG.supabaseUrl}/rest/v1/rpc/log_event`, {
+      method: 'POST', headers: sbHeaders(), keepalive: true,
+      body: JSON.stringify({ p_session: SESSION_ID, p_event: event, p_props: props,
+                             p_path: location.pathname, p_referrer: REFERRER, p_utm: UTM })
+    }).catch(() => {});
+  } catch (e) {}
 }
 
 async function loadBatches() {
@@ -876,7 +935,10 @@ function explainError(message) {
       : { msg: 'This batch is full. Pick another date.', go: '#batch-sec' };
     case 'BATCH_CLOSED':
     case 'BATCH_NOT_FOUND': return { msg: 'Orders for this batch have closed. Pick another date.', go: '#batch-sec' };
-    case 'TOO_MANY_RESERVATIONS': return { msg: 'This number already has 3 reservations in this batch. Message us on WhatsApp to change them.' };
+    case 'TOO_MANY_RESERVATIONS': return { msg: 'There are already several reservations from this number or network. Message us on WhatsApp and we\u2019ll sort it out.' };
+    case 'TOO_FAST': return { msg: 'That was quick. Check your details, then tap Reserve again.' };
+    case 'BUSY': return { msg: 'We\u2019re getting a lot of reservations right now. Try again in a few minutes, or message us on WhatsApp.' };
+    case 'REQUEST_REJECTED': return { msg: 'We couldn\u2019t take this reservation. Message us on WhatsApp instead.' };
     case 'PHONE_INVALID': return { field: 'f-phone' };
     case 'NAME_INVALID': return { field: 'f-name' };
     case 'AREA_INVALID': return { field: 'f-area' };
@@ -931,19 +993,25 @@ async function reserve() {
     const label = $('[data-act="reserve"]');
     const oldLabel = label.textContent;
     label.textContent = 'Reserving\u2026';
+    track('reserve_clicked', { batch: b.id, boxes: t.boxes, total: t.total, area: state.area });
     try {
       const r = await submitReservation({
         p_batch: b.id,
         p_items: t.items.map(i => ({ product_id: i.id, qty: i.qty })),
-        p_name: name, p_phone: phone, p_area: state.area, p_address: address, p_note: note || null
+        p_name: name, p_phone: phone, p_area: state.area, p_address: address, p_note: note || null,
+        p_hp: $('#leave_empty').value,
+        p_elapsed_ms: Date.now() - PAGE_T0,
+        p_meta: { ...clientMeta(), referrer: REFERRER, utm: UTM }
       });
       order = { ...order, id: r.code, items: r.items.map(i => ({ name: i.name, qty: i.qty, line: i.line })),
                 subtotal: r.subtotal, delivery: r.delivery_fee, total: r.total };
       wasConfirmed = r.was_confirmed;
       b.reserved = r.reserved_boxes;
       saved = true;
+      track('reserve_success', { batch: b.id, boxes: r.boxes, total: r.total, now_confirmed: r.now_confirmed });
     } catch (err) {
       if (err.known) {
+        track('reserve_error', { code: String(err.message).split(':')[0] });
         const ex = explainError(err.message);
         if (ex.field) {
           setInvalid(ex.field, true);
@@ -956,6 +1024,7 @@ async function reserve() {
         return;
       }
       console.warn('Reservation not saved, falling back to WhatsApp', err);
+      track('reserve_fallback', { reason: String(err.message).slice(0, 40) });
       showFormError('We couldn\u2019t save your reservation just now. Send it to us on WhatsApp from the next screen instead.');
     } finally {
       reserving = false;
@@ -1016,28 +1085,39 @@ function closeSheet() {
 }
 
 document.addEventListener('click', e => {
+  const wa = e.target.closest('a[href*="wa.me"]');
+  if (wa) {
+    const ctx = wa.id === 'sheet-wa' ? 'confirmation' : wa.id === 'wa-foot' ? 'footer' : wa.id === 'wa-area' ? 'other_area'
+      : (wa.closest('.box') ? 'coming_soon' : 'other');
+    track(ctx === 'coming_soon' ? 'notify_clicked' : 'whatsapp_clicked',
+          { context: ctx, product: wa.closest('.box') ? (wa.closest('.box').querySelector('[data-flip]') || {}).dataset?.flip : undefined });
+  }
   const t = e.target.closest('[data-act]');
   if (!t) {
     const f = e.target.closest('.flip');
-    if (f) toggleFlip(f.dataset.flip);
+    if (f) { toggleFlip(f.dataset.flip); track('box_flipped', { product: f.dataset.flip }); }
     if (e.target === $('#sheet-wrap')) closeSheet();
     return;
   }
   const { act, id } = t.dataset;
   switch (act) {
     case 'goto': goTo(t.dataset.target); break;
-    case 'flip': toggleFlip(id); break;
+    case 'flip': toggleFlip(id); track('box_flipped', { product: id }); break;
     case 'inc':
       state.qty[id] = Math.min(CONFIG.maxPerBox, state.qty[id] + 1);
-      renderQty(id, 'inc'); refresh(); showFormError(''); break;
+      renderQty(id, 'inc'); refresh(); showFormError('');
+      track('box_added', { product: id, qty: state.qty[id] }); break;
     case 'dec':
       state.qty[id] = Math.max(0, state.qty[id] - 1);
-      renderQty(id, state.qty[id] === 0 ? 'inc' : 'dec'); refresh(); break;
+      renderQty(id, state.qty[id] === 0 ? 'inc' : 'dec'); refresh();
+      track('box_removed', { product: id, qty: state.qty[id] }); break;
     case 'batch':
       state.batchId = id; renderBatches(); refresh(); showFormError('');
+      track('batch_selected', { batch: id, reserved: (batchById(id) || {}).reserved });
       $(`.batch[data-id="${id}"]`).focus(); break;
     case 'area':
       state.area = id; renderAreas(); setInvalid('f-area', false);
+      track('area_selected', { area: id });
       $(`.area[data-id="${id}"]`).focus(); break;
     case 'reserve': reserve(); break;
     case 'bar': {
@@ -1065,6 +1145,22 @@ $('#wa-area').href = waLink('Hi, do you deliver to my area? I live in ');
 $$('.js-target').forEach(el => { el.textContent = CONFIG.targetBoxes; });
 renderHero(); renderBoxes(); renderBatches(); renderAreas(); refresh();
 loadBatches();
+
+track('page_view', { device: clientMeta().device, screen: clientMeta().screen });
+$$('.faq details').forEach((d, i) => d.addEventListener('toggle', () => {
+  if (d.open) track('faq_opened', { q: i + 1, text: d.querySelector('summary').textContent.slice(0, 60) });
+}));
+if ('IntersectionObserver' in window) {
+  const seen = new Set();
+  const io = new IntersectionObserver(entries => entries.forEach(en => {
+    if (en.isIntersecting && !seen.has(en.target.id)) {
+      seen.add(en.target.id);
+      track('section_viewed', { section: en.target.id, ms: Date.now() - PAGE_T0 });
+      io.unobserve(en.target);
+    }
+  }), { threshold: 0.35 });
+  $$('section[id]').forEach(sec => io.observe(sec));
+}
 </script>
 </body>
 </html>
