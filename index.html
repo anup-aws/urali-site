@@ -505,7 +505,10 @@ body.sheet-open .bar-sticky{display:none}
    EDIT THESE BEFORE GOING LIVE
    ============================================================ */
 const CONFIG = {
-  whatsappNumber: '917996946363',   // your WhatsApp Business number: country code, no + or spaces
+  whatsappNumber: '917996946363',
+  // Reservations API (PostgREST on the VPS, Supabase-compatible). Leave empty to run without a backend.
+  supabaseUrl: 'https://urali.anups.cloud/api',
+  supabaseKey: 'public',   // your WhatsApp Business number: country code, no + or spaces
   fssai: 'FSSAI reg. no. to be added', // replace with your registration number
   makerLine: 'Fried by our partner kitchen in Thrissur.', // use the unit's real name once agreed with them
   targetBoxes: 40,        // batch goes ahead at this many boxes
@@ -590,10 +593,39 @@ function upcomingBatches(now = new Date()) {
   }
   return out;
 }
-const batches = upcomingBatches();
+let batches = upcomingBatches();
+const BACKEND = !!(CONFIG.supabaseUrl && CONFIG.supabaseKey);
 const batchById = id => batches.find(b => b.id === id);
-const isFull = b => b.reserved >= CONFIG.capacityBoxes;
-const isConfirmed = b => b.reserved >= CONFIG.targetBoxes;
+const tgt = b => b.target ?? CONFIG.targetBoxes;
+const cap = b => b.capacity ?? CONFIG.capacityBoxes;
+const isFull = b => b.status === 'full' || b.reserved >= cap(b);
+const isConfirmed = b => b.reserved >= tgt(b);
+const parseDay = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+
+function sbHeaders() {
+  return { apikey: CONFIG.supabaseKey, 'Content-Type': 'application/json' };
+}
+
+async function loadBatches() {
+  if (!BACKEND) return;
+  try {
+    const nowIso = encodeURIComponent(new Date().toISOString());
+    const url = `${CONFIG.supabaseUrl}/rest/v1/batches?select=id,cutoff_at,delivery_from,delivery_to,target_boxes,capacity_boxes,reserved_boxes,status`
+      + `&status=in.(open,confirmed,full)&cutoff_at=gt.${nowIso}&order=id.asc&limit=${CONFIG.batchesShown}`;
+    const res = await fetch(url, { headers: sbHeaders() });
+    if (!res.ok) throw new Error('batches ' + res.status);
+    const rows = await res.json();
+    batches = rows.map(r => ({
+      id: r.id, fry: parseDay(r.id), cutoff: new Date(r.cutoff_at),
+      dFrom: parseDay(r.delivery_from), dTo: parseDay(r.delivery_to),
+      reserved: r.reserved_boxes, target: r.target_boxes, capacity: r.capacity_boxes, status: r.status
+    }));
+    if (state.batchId && !batchById(state.batchId)) state.batchId = null;
+    renderHero(); renderBatches(); renderBoxes(); refresh();
+  } catch (err) {
+    console.warn('Could not load live batch counts', err);
+  }
+}
 
 /* ---------- drawings ---------- */
 function chipsFill() {
@@ -674,13 +706,13 @@ function renderHero() {
   const el = $('#next-batch');
   const b = batches.find(x => !isFull(x));
   if (!b) { el.innerHTML = `<p class="nb-count">New batch dates open soon. Message us on WhatsApp to hear first.</p>`; return; }
-  const pct = Math.min(100, Math.round(b.reserved / CONFIG.targetBoxes * 100));
+  const pct = Math.min(100, Math.round(b.reserved / tgt(b) * 100));
   const count = isConfirmed(b)
-    ? `Confirmed. ${CONFIG.capacityBoxes - b.reserved} boxes left in this batch.`
-    : `${b.reserved} of ${CONFIG.targetBoxes} boxes reserved. ${CONFIG.targetBoxes - b.reserved} more and it goes ahead.`;
+    ? `Confirmed. ${cap(b) - b.reserved} boxes left in this batch.`
+    : `${b.reserved} of ${tgt(b)} boxes reserved. ${tgt(b) - b.reserved} more and it goes ahead.`;
   el.innerHTML = `
     <div class="nb-top"><span class="nb-label">Next batch fries</span><strong>${fmt(b.fry)}</strong></div>
-    <span class="bar" role="progressbar" aria-label="Boxes reserved for this batch" aria-valuemin="0" aria-valuemax="${CONFIG.targetBoxes}" aria-valuenow="${Math.min(b.reserved, CONFIG.targetBoxes)}"><i></i></span>
+    <span class="bar" role="progressbar" aria-label="Boxes reserved for this batch" aria-valuemin="0" aria-valuemax="${tgt(b)}" aria-valuenow="${Math.min(b.reserved, tgt(b))}"><i></i></span>
     <p class="nb-count">${count}</p>
     <p class="nb-cut">Orders close ${fmt(b.cutoff)}, ${hourText(CONFIG.cutoffHour)}</p>`;
   const fill = $('.bar i', el);
@@ -741,11 +773,11 @@ function renderBatches() {
   $('#batch-intro').textContent = `We fry every ${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][CONFIG.fryWeekday]}. Reserve up to three weeks ahead.`;
   if (!batches.length) { list.innerHTML = `<p class="batch-empty">New batch dates open soon.</p>`; return; }
   list.innerHTML = batches.map(b => {
-    const pct = Math.min(100, Math.round(b.reserved / CONFIG.targetBoxes * 100));
+    const pct = Math.min(100, Math.round(b.reserved / tgt(b) * 100));
     const tag = isFull(b) ? '<span class="tag">Full</span>' : isConfirmed(b) ? '<span class="tag ok">Confirmed</span>' : '<span class="tag">Filling up</span>';
     const count = isFull(b) ? 'This batch is full.'
-      : isConfirmed(b) ? `${CONFIG.capacityBoxes - b.reserved} boxes left.`
-      : `${b.reserved} of ${CONFIG.targetBoxes} reserved, ${CONFIG.targetBoxes - b.reserved} more to go ahead.`;
+      : isConfirmed(b) ? `${cap(b) - b.reserved} boxes left.`
+      : `${b.reserved} of ${tgt(b)} reserved, ${tgt(b) - b.reserved} more to go ahead.`;
     return `<button class="batch" role="radio" aria-checked="${state.batchId === b.id}" data-act="batch" data-id="${b.id}" ${isFull(b) ? 'disabled' : ''}>
       <span class="batch-top"><span class="batch-date">Fried ${fmt(b.fry)}</span>${tag}</span>
       <span class="batch-meta">At your door ${fmtRange(b.dFrom, b.dTo)}. Orders close ${fmt(b.cutoff)}, ${hourText(CONFIG.cutoffHour)}.</span>
@@ -822,20 +854,49 @@ function normPhone(v) {
 
 function showFormError(msg) { const e = $('#form-error'); e.textContent = msg; e.classList.toggle('show', !!msg); }
 
-// Connect this to where you keep reservations (Google Sheet via Apps Script, Firestore, etc.).
-// For now it only logs; the WhatsApp button on the confirmation sends the order to you.
-async function submitReservation(order) {
-  console.log('Reservation', order);
+// Saves the reservation in Supabase. Prices and totals come back from the server.
+async function submitReservation(payload) {
+  const res = await fetch(`${CONFIG.supabaseUrl}/rest/v1/rpc/create_reservation`, {
+    method: 'POST', headers: sbHeaders(), body: JSON.stringify(payload)
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const e = new Error(body.message || 'REQUEST_FAILED');
+    e.known = /^[A-Z_]+(:\d+)?$/.test(body.message || '');
+    throw e;
+  }
+  return body;
 }
 
-function reserve() {
+function explainError(message) {
+  const [code, extra] = String(message).split(':');
+  switch (code) {
+    case 'BATCH_FULL': return Number(extra) > 0
+      ? { msg: `Only ${extra} boxes are left in this batch. Pick another date or reserve fewer boxes.`, go: '#batch-sec' }
+      : { msg: 'This batch is full. Pick another date.', go: '#batch-sec' };
+    case 'BATCH_CLOSED':
+    case 'BATCH_NOT_FOUND': return { msg: 'Orders for this batch have closed. Pick another date.', go: '#batch-sec' };
+    case 'TOO_MANY_RESERVATIONS': return { msg: 'This number already has 3 reservations in this batch. Message us on WhatsApp to change them.' };
+    case 'PHONE_INVALID': return { field: 'f-phone' };
+    case 'NAME_INVALID': return { field: 'f-name' };
+    case 'AREA_INVALID': return { field: 'f-area' };
+    case 'ADDRESS_INVALID': return { field: 'f-address' };
+    case 'NOTE_TOO_LONG': return { msg: 'Keep the note under 300 characters.' };
+    case 'PRODUCT_UNAVAILABLE': return { msg: 'One of these boxes isn\u2019t available right now. Refresh the page and try again.' };
+    default: return { msg: 'Check the number of boxes. You can reserve up to 5 of each.', go: '#boxes-sec' };
+  }
+}
+
+let reserving = false;
+async function reserve() {
+  if (reserving) return;
   showFormError('');
   const t = totals();
   const b = batchById(state.batchId);
   if (t.boxes === 0) { showFormError('Add at least one box.'); goTo('#boxes-sec'); return; }
   if (!b) { showFormError('Pick a batch date.'); goTo('#batch-sec'); return; }
-  if (t.boxes > CONFIG.capacityBoxes - b.reserved) {
-    showFormError(`Only ${CONFIG.capacityBoxes - b.reserved} boxes are left in this batch. Pick another date or reserve fewer boxes.`);
+  if (t.boxes > cap(b) - b.reserved) {
+    showFormError(`Only ${cap(b) - b.reserved} boxes are left in this batch. Pick another date or reserve fewer boxes.`);
     goTo('#batch-sec'); return;
   }
 
@@ -853,36 +914,81 @@ function reserve() {
     return;
   }
 
-  const order = {
-    id: 'URL-' + Math.floor(1000 + Math.random() * 9000),
-    createdAt: new Date().toISOString(),
-    batchFryDate: b.id,
+  const note = $('#note').value.trim();
+  let order = {
+    id: 'URL-' + Math.floor(10000 + Math.random() * 90000),
     items: t.items.map(({ name, qty, line }) => ({ name, qty, line })),
     subtotal: t.subtotal, delivery: t.delivery, total: t.total,
-    name, phone, area: state.area, address, note: $('#note').value.trim()
+    name, phone, area: state.area, address, note
   };
-  const wasConfirmed = isConfirmed(b);
-  submitReservation(order);
-  b.reserved += t.boxes;
-  openSheet(order, b, wasConfirmed);
+  let wasConfirmed = isConfirmed(b);
+  let saved = false;
+
+  if (BACKEND) {
+    const btns = $$('[data-act="reserve"], #bar-btn');
+    reserving = true;
+    btns.forEach(x => { x.disabled = true; });
+    const label = $('[data-act="reserve"]');
+    const oldLabel = label.textContent;
+    label.textContent = 'Reserving\u2026';
+    try {
+      const r = await submitReservation({
+        p_batch: b.id,
+        p_items: t.items.map(i => ({ product_id: i.id, qty: i.qty })),
+        p_name: name, p_phone: phone, p_area: state.area, p_address: address, p_note: note || null
+      });
+      order = { ...order, id: r.code, items: r.items.map(i => ({ name: i.name, qty: i.qty, line: i.line })),
+                subtotal: r.subtotal, delivery: r.delivery_fee, total: r.total };
+      wasConfirmed = r.was_confirmed;
+      b.reserved = r.reserved_boxes;
+      saved = true;
+    } catch (err) {
+      if (err.known) {
+        const ex = explainError(err.message);
+        if (ex.field) {
+          setInvalid(ex.field, true);
+          $('#' + ex.field).scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+        } else {
+          showFormError(ex.msg);
+          if (ex.go) goTo(ex.go);
+        }
+        loadBatches();
+        return;
+      }
+      console.warn('Reservation not saved, falling back to WhatsApp', err);
+      showFormError('We couldn\u2019t save your reservation just now. Send it to us on WhatsApp from the next screen instead.');
+    } finally {
+      reserving = false;
+      btns.forEach(x => { x.disabled = false; });
+      label.textContent = oldLabel;
+    }
+  }
+
+  if (!saved) b.reserved += t.boxes;
+  openSheet(order, b, wasConfirmed, saved);
+  if (saved) showFormError('');
 
   state.qty = { classic: 0, duo: 0 };
   state.batchId = null;
   PRODUCTS.forEach(p => renderQty(p.id));
   renderHero(); renderBatches(); refresh();
+  if (saved) loadBatches();
 }
 
-function openSheet(order, b, wasConfirmed) {
+function openSheet(order, b, wasConfirmed, saved = false) {
   $('#sheet-title').textContent = `You're on the ${fmt(b.fry)} batch`;
   $('#sheet-id').textContent = `Reservation ${order.id}. Nothing to pay today.`;
   $('#sheet-items').innerHTML = order.items.map(i => `<div class="row"><span>${i.name} &times; ${i.qty}</span><span>${rupee(i.line)}</span></div>`).join('')
     + `<div class="row"><span>Delivery</span><span>${order.delivery ? rupee(order.delivery) : 'Free'}</span></div>`
     + `<div class="row total"><span>Pay later</span><span>${rupee(order.total)}</span></div>`;
   const payStep = wasConfirmed
-    ? 'This batch is already confirmed, so we send your payment link as soon as we get your message.'
-    : `When the batch reaches ${CONFIG.targetBoxes} boxes, we send your payment link. Pay within 24 hours to keep your box.`;
+    ? 'This batch is already confirmed, so we send your payment link on WhatsApp shortly.'
+    : `When the batch reaches ${tgt(b)} boxes, we send your payment link on WhatsApp. Pay within 24 hours to keep your box.`;
+  $('#sheet-wa').textContent = saved ? 'Also send a copy on WhatsApp' : 'Send it on WhatsApp';
+  $('#sheet-wa').classList.toggle('btn-primary', !saved);
+  $('#sheet-wa').classList.toggle('btn-line', saved);
   $('#sheet-steps').innerHTML = [
-    'Send us your reservation on WhatsApp so it\u2019s on our list.',
+    saved ? 'Your reservation is saved with us. Keep your reservation code handy.' : 'Send us your reservation on WhatsApp so it\u2019s on our list.',
     payStep,
     `Chips are fried ${fmt(b.fry)} and reach you ${fmtRange(b.dFrom, b.dTo)}.`
   ].map((s, i) => `<li><span class="n">${i + 1}</span><p>${s}</p></li>`).join('');
@@ -958,6 +1064,7 @@ $('#wa-foot').href = waLink('Hi, I have a question about urali chips.');
 $('#wa-area').href = waLink('Hi, do you deliver to my area? I live in ');
 $$('.js-target').forEach(el => { el.textContent = CONFIG.targetBoxes; });
 renderHero(); renderBoxes(); renderBatches(); renderAreas(); refresh();
+loadBatches();
 </script>
 </body>
 </html>
