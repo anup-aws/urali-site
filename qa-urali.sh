@@ -67,6 +67,7 @@ sql "update reservations set status='cancelled' where source='qa' and batch_id='
 for i in 1 2 3 4 5 6 7 8; do reserve 203.0.113.$((R1+i)) 900000003$i 1 >/dev/null & done; wait
 RB=$(sql "select reserved_boxes from batches where id='$TB'")
 expect "8 people racing for 3 boxes: never oversold" "3" "$RB"
+sql "update reservations set status='cancelled' where source='qa' and batch_id='$TB' and status='reserved'; update batches set reserved_boxes=0, status='open', confirmed_at=null, target_boxes=$TARGET, capacity_boxes=$CAP where id='$TB'" >/dev/null
 
 echo "== Public API surface (through Nginx)"
 expect "batch counts are public"            "HTTP200" "$(curl -s -o /dev/null -w 'HTTP%{http_code}' "$PUB/batches?select=id&limit=1")"
