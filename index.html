@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>urali | Kaya varuthathu, fried after you order it</title>
+<link rel="canonical" href="https://uralichips.com/">
 <meta name="description" content="A farm-to-home initiative, just started. Thrissur nendran chips fried only in coconut oil, no palm oil, no preservatives added, in small weekly batches. Reserve a box for Kothanur, Horamavu, Ramamurthy Nagar or Byrathi and pay only when your batch is confirmed.">
 <meta name="theme-color" content="#F2B632">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -511,8 +512,9 @@ body.sheet-open .bar-sticky{display:none}
    ============================================================ */
 const CONFIG = {
   whatsappNumber: '917996946363',
-  // Reservations API (PostgREST on the VPS, Supabase-compatible). Leave empty to run without a backend.
-  supabaseUrl: 'https://urali.anups.cloud/api',
+  // Reservations API (PostgREST on the VPS, Supabase-compatible). Relative, so the
+  // page works on uralichips.com, www, and any other hostname pointed at this server.
+  supabaseUrl: '/api',
   supabaseKey: 'public',   // your WhatsApp Business number: country code, no + or spaces
   fssai: 'FSSAI reg. no. to be added', // replace with your registration number
   makerLine: 'Fried by our partner kitchen in Thrissur.', // use the unit's real name once agreed with them
