@@ -50,7 +50,15 @@ for f in favicon.png favicon-180.png favicon-32.png og-image.jpg; do
   install -o urali-media -g urali-media -m 644 "$TMP/$f" "$PRIVATE/defaults/$f"
   [ -f "$PUBLIC/$f" ] || install -o urali-media -g www-data -m 644 "$TMP/$f" "$PUBLIC/$f"
 done
-ls "$PUBLIC"
+# the original drawings, shown first in every version strip; owned by root so the service can't change them
+install -d -o root -g www-data -m 755 "$PUBLIC/originals"
+for n in hero box-classic box-duo box-tin box-chakka; do
+  fetch "original-$n.webp" "$TMP/original-$n.webp"
+  install -o root -g www-data -m 644 "$TMP/original-$n.webp" "$PUBLIC/originals/$n.webp"
+done
+install -o root -g www-data -m 644 "$TMP/favicon.png" "$PUBLIC/originals/favicon.png"
+install -o root -g www-data -m 644 "$TMP/og-image.jpg" "$PUBLIC/originals/og-image.jpg"
+ls "$PUBLIC" "$PUBLIC/originals"
 
 log "3/7 Media service"
 install -d -m 755 /opt/urali-media

@@ -4,6 +4,8 @@ Upload these to the top level of `anup-aws/urali-site` (replace existing files w
 
     update-urali-006.sh   media_server.py   studio.html   admin.html   index.html
     favicon.png   favicon-180.png   favicon-32.png   og-image.jpg
+    original-hero.webp   original-box-classic.webp   original-box-duo.webp
+    original-box-tin.webp   original-box-chakka.webp
     update-urali-005.sh   (small fix; replace the old one)
 
 Run update 005 first if you haven't yet, then:
@@ -18,9 +20,17 @@ To replace the designer's password:   `bash /root/update-urali-006.sh --add-user
 
 ## What your designer can do at uralichips.com/studio/
 
-Replace the picture at the top of the page, each of the four product boxes, the browser-tab
-icon, and the image shown when the link is shared on WhatsApp. He can drag a file onto a card,
-edit its description, switch back to any earlier upload, or return to the original drawing.
+Each picture on the site — the top image, the four product boxes, the browser-tab icon, and the
+WhatsApp link preview — has one row of versions:
+
+    Original  →  Version 1  →  Version 2  →  …  →  + Add new
+
+The original is the drawing that's on the site today, shown as a real picture. Tapping any tile
+makes it live. "Add new" uploads another version and makes it live. Dragging a file onto a card
+does the same. Going back to the original is just tapping it. Nothing is ever deleted.
+
+Box photos should be landscape, 3:2 (1200 × 800 px), with the subject in the middle — phones
+trim the sides slightly. The top image works best at 1600 × 1000 px.
 
 He cannot see orders, customers or anything in the admin page.
 

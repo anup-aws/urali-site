@@ -21,35 +21,40 @@ SLOTS = {
     "hero": {
         "label": "Top of the page",
         "where": "The big picture under the headline, the first thing people see.",
-        "size": "At least 1600 × 1000 px, landscape",
+        "size": "1600 × 1000 px, landscape",
+        "shape": "16/10",
         "kind": "photo", "max": 1600,
         "alt": "Banana chips frying in a bell-metal urali",
     },
     "box-classic": {
         "label": "Kaya Varuthathu box",
         "where": "Front of the first product box.",
-        "size": "1200 × 1200 px, square",
+        "size": "1200 × 800 px, landscape (3:2). Keep the subject in the middle — phones trim the sides a little.",
+        "shape": "3/2",
         "kind": "photo", "max": 1200,
         "alt": "Kaya Varuthathu, salted nendran banana chips",
     },
     "box-duo": {
         "label": "Madhuram Duo box",
         "where": "Front of the second product box.",
-        "size": "1200 × 1200 px, square",
+        "size": "1200 × 800 px, landscape (3:2). Keep the subject in the middle — phones trim the sides a little.",
+        "shape": "3/2",
         "kind": "photo", "max": 1200,
         "alt": "Madhuram Duo, banana chips and sharkara varatti",
     },
     "box-tin": {
         "label": "Palaharam Tin (coming soon)",
         "where": "Third product box. Shown faded, with a Coming soon ribbon.",
-        "size": "1200 × 1200 px, square",
+        "size": "1200 × 800 px, landscape (3:2). Keep the subject in the middle — phones trim the sides a little.",
+        "shape": "3/2",
         "kind": "photo", "max": 1200,
         "alt": "Palaharam Tin of Kerala snacks",
     },
     "box-chakka": {
         "label": "Chakka Varuthathu (coming soon)",
         "where": "Fourth product box. Shown faded, with a Coming soon ribbon.",
-        "size": "1200 × 1200 px, square",
+        "size": "1200 × 800 px, landscape (3:2). Keep the subject in the middle — phones trim the sides a little.",
+        "shape": "3/2",
         "kind": "photo", "max": 1200,
         "alt": "Chakka Varuthathu, jackfruit chips",
     },
@@ -57,6 +62,7 @@ SLOTS = {
         "label": "Browser tab icon",
         "where": "Browser tabs and the phone home-screen icon. Keep it bold and simple.",
         "size": "512 × 512 px, square",
+        "shape": "1/1",
         "kind": "favicon",
         "alt": "urali",
     },
@@ -64,11 +70,21 @@ SLOTS = {
         "label": "Link preview",
         "where": "The picture shown when uralichips.com is shared on WhatsApp, Facebook or Instagram.",
         "size": "1200 × 630 px",
+        "shape": "1200/630",
         "kind": "og",
         "alt": "urali — Kerala banana chips fried in Thrissur after you order",
     },
 }
 FIXED = {"favicon": ["favicon.png", "favicon-180.png", "favicon-32.png"], "og": ["og-image.jpg"]}
+ORIGINAL = {
+    "hero": "/images/originals/hero.webp",
+    "box-classic": "/images/originals/box-classic.webp",
+    "box-duo": "/images/originals/box-duo.webp",
+    "box-tin": "/images/originals/box-tin.webp",
+    "box-chakka": "/images/originals/box-chakka.webp",
+    "favicon": "/images/originals/favicon.png",
+    "og": "/images/originals/og-image.jpg",
+}
 
 LOCK = threading.Lock()
 STATE_FILE = os.path.join(PRIVATE, "state.json")
@@ -214,9 +230,10 @@ class Handler(BaseHTTPRequestHandler):
         out = []
         for k, meta in SLOTS.items():
             v = st["slots"][k]
-            out.append({"slot": k, **{x: meta[x] for x in ("label", "where", "size", "kind")},
-                        "current": v["current"], "alt": v["alt"],
-                        "history": list(reversed(v["history"]))[:HISTORY_KEEP]})
+            versions = [{"n": i + 1, **h} for i, h in enumerate(v["history"])][-HISTORY_KEEP:]
+            out.append({"slot": k, **{x: meta[x] for x in ("label", "where", "size", "kind", "shape")},
+                        "original": ORIGINAL[k], "current": v["current"] or "original",
+                        "alt": v["alt"], "versions": versions})
         return {"ok": True, "slots": out}
 
     def do_GET(self):
@@ -265,6 +282,12 @@ class Handler(BaseHTTPRequestHandler):
                     v["alt"] = alt
                     save_state(st)
                     audit(self.user(), "alt", slot, alt)
+                elif u.path == "/use" and body.get("file") == "original":
+                    v["current"] = None
+                    if slot in FIXED:
+                        restore_default_fixed(slot)
+                    save_state(st)
+                    audit(self.user(), "use", slot, "original")
                 elif u.path == "/use":
                     f = body.get("file")
                     if not any(h["file"] == f for h in v["history"]):
