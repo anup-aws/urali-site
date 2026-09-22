@@ -346,7 +346,7 @@ body.sheet-open .bar-sticky{display:none}
     <h2>Reserve now, pay when your batch is on</h2>
     <p class="intro">We only fry what's been reserved. That's how every box reaches you within two days of frying.</p>
     <ol class="steps">
-      <li><span class="n">1</span><div><h3>Reserve your boxes</h3><p>Pick a batch date up to three weeks ahead. You don't pay anything yet.</p></div></li>
+      <li><span class="n">1</span><div><h3>Reserve your boxes</h3><p>Reserve a box in the batch that's open. You don't pay anything yet.</p></div></li>
       <li><span class="n">2</span><div><h3>The batch fills up</h3><p>A batch goes ahead once <span class="js-target">40</span> boxes are reserved. You can see the count on this page.</p></div></li>
       <li><span class="n">3</span><div><h3>Pay on WhatsApp</h3><p>When your batch is confirmed, we send you a payment link. Pay within 24 hours to keep your box.</p></div></li>
       <li><span class="n">4</span><div><h3>Fried, packed, delivered</h3><p>Your chips are fried, packed the same day and delivered 24 to 48 hours later.</p></div></li>
@@ -422,8 +422,8 @@ body.sheet-open .bar-sticky{display:none}
   </section>
 
   <section class="sec" id="batch-sec" style="padding-top:12px">
-    <h2>Pick your batch</h2>
-    <p class="intro" id="batch-intro">We fry once a week. Reserve up to three weeks ahead.</p>
+    <h2>The next batch</h2>
+    <p class="intro" id="batch-intro">We fry once a week.</p>
     <div class="batches" id="batch-list" role="radiogroup" aria-label="Batch date"></div>
   </section>
 
@@ -471,7 +471,7 @@ body.sheet-open .bar-sticky{display:none}
     <h2>Straight answers</h2>
     <p class="intro">What people ask before they reserve.</p>
     <details><summary>Why don't I pay when I reserve?</summary><p>A batch only goes ahead once <span class="js-target">40</span> boxes are reserved. Until then you haven't paid for anything, so there's nothing to refund if your plans change.</p></details>
-    <details><summary>What if my batch doesn't fill up?</summary><p>We message you before orders close. You can move your boxes to the next batch or cancel.</p></details>
+    <details><summary>What if my batch doesn't fill up?</summary><p>Your boxes move to the next batch automatically, and we message you. Nothing has been paid, so you can cancel any time.</p></details>
     <details><summary>Who's behind urali?</summary><p>A small team that has just started, working with a partner kitchen in Thrissur. We handle orders, pickup and delivery ourselves, which is why we only cover four areas for now.</p></details>
     <details><summary>How long do I have to pay?</summary><p>24 hours from when we send the link. After that, your boxes go back into the batch for someone else.</p></details>
     <details><summary>When will my box arrive?</summary><p>24 to 48 hours after frying. The date stamped on your pouch tells you exactly when your chips were fried.</p></details>
@@ -523,7 +523,7 @@ const CONFIG = {
   fryWeekday: 3,          // 0 = Sunday ... 3 = Wednesday
   cutoffDaysBefore: 3,    // orders close this many days before frying (3 = Sunday)
   cutoffHour: 21,         // 24h clock, 21 = 9 pm
-  batchesShown: 3,        // about three weeks ahead
+  batchesShown: 1,        // how many upcoming batches to show; 1 = the next batch only
   deliveryFee: 40,
   freeDeliveryAbove: 599,
   maxPerBox: 5,
@@ -831,7 +831,10 @@ function renderQty(id, focusAct) {
 
 function renderBatches() {
   const list = $('#batch-list');
-  $('#batch-intro').textContent = `We fry every ${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][CONFIG.fryWeekday]}. Reserve up to three weeks ahead.`;
+  const dayName = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][CONFIG.fryWeekday];
+  $('#batch-intro').textContent = CONFIG.batchesShown > 1
+    ? `We fry every ${dayName}. Pick the batch you want.`
+    : `We fry every ${dayName}. This is the batch that's open now.`;
   if (!batches.length) { list.innerHTML = `<p class="batch-empty">New batch dates open soon.</p>`; return; }
   list.innerHTML = batches.map(b => {
     const pct = Math.min(100, Math.round(b.reserved / tgt(b) * 100));

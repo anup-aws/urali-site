@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>urali admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Chettan+2:wght@600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --manjal:#F2B632; --manjal-deep:#D9951A; --leaf:#1E4D2B; --leaf-dark:#133020;
+  --leaf-soft:#CFE0CC; --kasavu:#C9A227; --mundu:#FFFEF8; --sharkara:#4A2A17;
+  --muted:#5E5446; --line:#E4DAC0; --chuvappu:#B3261E; --ok:#2F6B3A;
+  --display:"Baloo Chettan 2",system-ui,sans-serif; --body:"Source Serif 4",Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#F6F4EC;font-family:var(--body);color:var(--leaf-dark);font-size:15px;line-height:1.5}
+h1,h2,h3,th,.num,button,.tab{font-family:var(--display)}
+a{color:var(--leaf)}
+:focus-visible{outline:3px solid var(--leaf);outline-offset:2px}
+
+header{background:var(--leaf);color:var(--mundu);padding:14px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:4px solid var(--kasavu)}
+header h1{font-size:22px;font-weight:800;letter-spacing:-.02em}
+header .ml{color:var(--manjal);font-size:16px;font-weight:600}
+header .spacer{flex:1}
+.pill{background:rgba(255,255,255,.14);padding:4px 11px;border-radius:99px;font-size:13px}
+.wrap{max-width:1180px;margin:0 auto;padding:18px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.card .k{font-size:13px;color:var(--muted)}
+.card .v{font-family:var(--display);font-weight:800;font-size:27px;line-height:1.15;margin-top:3px}
+.card.hi{background:var(--manjal);border-color:var(--manjal-deep)}
+
+nav.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tab{background:#fff;border:1px solid var(--line);border-radius:99px;padding:8px 16px;cursor:pointer;font-size:15px;font-weight:700;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--leaf);border-color:var(--leaf);color:var(--mundu)}
+
+section{display:none}
+section.on{display:block}
+.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;overflow-x:auto}
+.panel h2{font-size:19px;margin-bottom:4px}
+.panel .sub{color:var(--muted);font-size:14px;margin-bottom:12px}
+
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid #EFEADC;vertical-align:top}
+th{font-size:13px;color:var(--muted);font-weight:700;white-space:nowrap}
+tr:hover td{background:#FBFAF4}
+td.num,th.num{text-align:right;white-space:nowrap}
+.mono{font-variant-numeric:tabular-nums}
+
+.tag{display:inline-block;font-size:12px;font-family:var(--display);font-weight:700;padding:3px 9px;border-radius:99px;background:#F3E9CC;white-space:nowrap}
+.tag.ok{background:#DCEBD5;color:var(--ok)}
+.tag.warn{background:#FBE6C8;color:#9A5B12}
+.tag.bad{background:#F8DAD8;color:var(--chuvappu)}
+.tag.cool{background:#E3E9F5;color:#334B78}
+.flag{background:#F8DAD8;color:var(--chuvappu);font-size:11px;padding:2px 7px;border-radius:99px;margin-left:4px}
+
+button{font:inherit;cursor:pointer;border:0;border-radius:99px}
+.btn{background:var(--leaf);color:var(--mundu);padding:8px 16px;font-weight:700;font-size:14px}
+.btn.ghost{background:#fff;border:2px solid var(--line);color:var(--leaf-dark)}
+.btn.small{padding:5px 11px;font-size:13px}
+.btn.danger{background:#fff;border:2px solid var(--chuvappu);color:var(--chuvappu)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;gap:5px;flex-wrap:wrap}
+
+.bar{display:block;height:8px;background:#EFE5C9;border-radius:99px;overflow:hidden;min-width:90px;margin-top:5px}
+.bar i{display:block;height:100%;background:var(--leaf);border-radius:inherit}
+.bar i.done{background:var(--manjal-deep)}
+
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+select,input[type=search]{font:inherit;font-size:14px;padding:7px 11px;border:2px solid var(--line);border-radius:10px;background:#fff}
+.msg{padding:10px 14px;border-radius:10px;margin-bottom:12px;font-size:14px;display:none}
+.msg.show{display:block}
+.msg.good{background:#DCEBD5;color:var(--ok)}
+.msg.bad{background:#F8DAD8;color:var(--chuvappu)}
+.empty{color:var(--muted);padding:18px 2px}
+.muted{color:var(--muted)}
+.right{text-align:right}
+footer{color:var(--muted);font-size:13px;padding:10px 18px 30px;text-align:center}
+@media (max-width:640px){.wrap{padding:12px}.card .v{font-size:23px}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>urali admin</h1>
+  <span class="ml">ഉരുളി</span>
+  <span class="spacer"></span>
+  <span class="pill" id="clock"></span>
+  <button class="btn ghost small" data-act="refresh">Refresh</button>
+  <button class="btn small" data-act="maintenance" title="Create new batches, roll unfilled ones forward, release expired holds">Run maintenance</button>
+</header>
+
+<div class="wrap">
+  <div class="msg" id="msg" role="status"></div>
+  <div class="cards" id="summary"></div>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="batches" aria-selected="true">Batches</button>
+    <button class="tab" role="tab" data-tab="orders" aria-selected="false">Orders</button>
+    <button class="tab" role="tab" data-tab="kitchen" aria-selected="false">Kitchen sheet</button>
+    <button class="tab" role="tab" data-tab="delivery" aria-selected="false">Delivery run</button>
+    <button class="tab" role="tab" data-tab="traffic" aria-selected="false">Traffic</button>
+  </nav>
+
+  <section id="tab-batches" class="on">
+    <div class="panel">
+      <h2>Batches</h2>
+      <p class="sub">A batch goes ahead at its target. If the cutoff passes without reaching it, the orders move to the next batch automatically.</p>
+      <div id="batches"></div>
+    </div>
+  </section>
+
+  <section id="tab-orders">
+    <div class="panel">
+      <h2>Orders</h2>
+      <p class="sub">Every reservation. Test rows are hidden.</p>
+      <div class="toolbar">
+        <select id="f-status">
+          <option value="">All statuses</option>
+          <option value="reserved">Reserved</option>
+          <option value="link_sent">Link sent</option>
+          <option value="paid">Paid</option>
+          <option value="delivered">Delivered</option>
+          <option value="expired">Expired</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+        <select id="f-batch"><option value="">All batches</option></select>
+        <input type="search" id="f-text" placeholder="Name, phone, code or area">
+      </div>
+      <div id="orders"></div>
+    </div>
+  </section>
+
+  <section id="tab-kitchen">
+    <div class="panel">
+      <h2>Kitchen sheet</h2>
+      <p class="sub">Send this to Thrissur once a batch is confirmed.</p>
+      <div class="toolbar"><select id="k-batch"></select><button class="btn ghost small" data-act="copy-kitchen">Copy as text</button></div>
+      <div id="kitchen"></div>
+    </div>
+  </section>
+
+  <section id="tab-delivery">
+    <div class="panel">
+      <h2>Delivery run</h2>
+      <p class="sub">Grouped by area, in the order you'd drive it.</p>
+      <div class="toolbar"><select id="d-batch"></select><button class="btn ghost small" data-act="copy-delivery">Copy as text</button></div>
+      <div id="delivery"></div>
+    </div>
+  </section>
+
+  <section id="tab-traffic">
+    <div class="panel">
+      <h2>Visitors and reservations</h2>
+      <p class="sub">First-party analytics from the website. No third-party trackers.</p>
+      <div id="funnel"></div>
+    </div>
+    <div class="panel">
+      <h2>Where they came from</h2>
+      <div id="sources"></div>
+    </div>
+  </section>
+</div>
+
+<footer>Private. Do not share this address. Data stays on your own server.</footer>
+
+<script>
+const API = '/admin/api';
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const rupee = n => '₹' + Number(n || 0).toLocaleString('en-IN');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const day = s => { const d = new Date(s + 'T00:00:00'); return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`; };
+const stamp = s => { const d = new Date(s); return `${d.getDate()} ${MONTHS[d.getMonth()]} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; };
+
+let DATA = { summary:{}, batches:[], orders:[], kitchen:[], delivery:[], funnel:[] };
+
+function say(text, bad) {
+  const m = $('#msg');
+  m.textContent = text;
+  m.className = 'msg show ' + (bad ? 'bad' : 'good');
+  clearTimeout(say.t);
+  say.t = setTimeout(() => { m.className = 'msg'; }, 6000);
+}
+
+async function get(path) {
+  const r = await fetch(`${API}/${path}`, { headers: { 'Accept': 'application/json' } });
+  if (!r.ok) throw new Error(`${path}: ${r.status}`);
+  return r.json();
+}
+
+async function act(action, args = {}) {
+  const r = await fetch(`${API}/rpc/admin_action`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ p_action: action, p_code: args.code ?? null, p_batch: args.batch ?? null, p_value: args.value ?? null })
+  });
+  const body = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(body.message || `HTTP ${r.status}`);
+  return body;
+}
+
+async function loadAll() {
+  try {
+    const [summary, batches, orders, kitchen, delivery, funnel] = await Promise.all([
+      get('admin_summary'), get('admin_batches'),
+      get('admin_orders?limit=400'), get('admin_kitchen'),
+      get('admin_delivery'), get('admin_funnel_daily?limit=21')
+    ]);
+    DATA = { summary: summary[0] || {}, batches, orders, kitchen, delivery, funnel };
+    renderAll();
+  } catch (e) {
+    say('Could not load data: ' + e.message, true);
+  }
+}
+
+function renderAll() {
+  renderSummary(); renderBatches(); fillBatchPickers();
+  renderOrders(); renderKitchen(); renderDelivery(); renderTraffic();
+  $('#clock').textContent = 'Updated ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+}
+
+function renderSummary() {
+  const s = DATA.summary;
+  const cards = [
+    ['Active orders', s.active_orders ?? 0, false],
+    ['Boxes reserved', s.active_boxes ?? 0, false],
+    ['Pipeline', rupee(s.pipeline_value), true],
+    ['Collected', rupee(s.collected), false],
+    ['Customers', s.customers ?? 0, false],
+    ['Visitors, 7 days', s.visitors_7d ?? 0, false]
+  ];
+  $('#summary').innerHTML = cards.map(([k, v, hi]) =>
+    `<div class="card ${hi ? 'hi' : ''}"><div class="k">${k}</div><div class="v">${esc(v)}</div></div>`).join('');
+}
+
+function batchTag(b) {
+  const map = { open:['Filling up',''], confirmed:['Confirmed','ok'], full:['Full','warn'],
+                closed:['Needs attention','bad'], rolled:['Rolled forward','cool'],
+                cancelled:['Cancelled','bad'], fried:['Fried','cool'], delivered:['Delivered','ok'] };
+  const [text, cls] = map[b.status] || [b.status, ''];
+  return `<span class="tag ${cls}">${text}</span>`;
+}
+
+function renderBatches() {
+  const rows = DATA.batches.map(b => {
+    const pct = Math.min(100, Math.round(b.reserved_boxes / Math.max(b.target_boxes, 1) * 100));
+    const past = new Date(b.cutoff_at) < new Date();
+    return `<tr>
+      <td><strong>${day(b.batch_id)}</strong><div class="muted" style="font-size:13px">deliver ${day(b.delivery_from)}–${day(b.delivery_to)}</div></td>
+      <td>${batchTag(b)}${b.status === 'closed' ? '<span class="flag">orders stuck</span>' : ''}</td>
+      <td class="num mono">${b.reserved_boxes}/${b.target_boxes}
+        <span class="bar"><i class="${pct >= 100 ? 'done' : ''}" style="width:${pct}%"></i></span></td>
+      <td class="num mono">${b.orders}</td>
+      <td class="num mono">${rupee(b.value)}</td>
+      <td class="num mono">${rupee(b.collected)}</td>
+      <td class="muted" style="font-size:13px">${stamp(b.cutoff_at)}${past ? ' <span class="tag bad">passed</span>' : ''}</td>
+    </tr>`;
+  }).join('');
+  $('#batches').innerHTML = DATA.batches.length ? `<table>
+    <tr><th>Fry date</th><th>Status</th><th class="num">Boxes</th><th class="num">Orders</th>
+        <th class="num">Value</th><th class="num">Paid</th><th>Orders close</th></tr>${rows}</table>`
+    : '<p class="empty">No batches yet. Run maintenance to create them.</p>';
+}
+
+function fillBatchPickers() {
+  const opts = DATA.batches.map(b => `<option value="${b.batch_id}">${day(b.batch_id)} — ${b.reserved_boxes} boxes</option>`).join('');
+  const active = DATA.batches.filter(b => ['open','confirmed','full'].includes(b.status));
+  const pick = (active[0] || DATA.batches[0] || {}).batch_id || '';
+  ['#k-batch', '#d-batch'].forEach(sel => {
+    const el = $(sel), keep = el.value;
+    el.innerHTML = opts;
+    el.value = keep || pick;
+  });
+  const fb = $('#f-batch'), keep = fb.value;
+  fb.innerHTML = '<option value="">All batches</option>' + opts;
+  fb.value = keep;
+}
+
+function orderTag(s) {
+  const map = { reserved:['Reserved',''], link_sent:['Link sent','warn'], paid:['Paid','ok'],
+                delivered:['Delivered','ok'], expired:['Expired','bad'], cancelled:['Cancelled','bad'],
+                moved:['Moved','cool'] };
+  const [t, c] = map[s] || [s, ''];
+  return `<span class="tag ${c}">${t}</span>`;
+}
+
+function renderOrders() {
+  const st = $('#f-status').value, ba = $('#f-batch').value, q = $('#f-text').value.trim().toLowerCase();
+  const list = DATA.orders.filter(o =>
+    (!st || o.status === st) && (!ba || o.batch_id === ba) &&
+    (!q || [o.code, o.customer_name, o.phone, o.area].join(' ').toLowerCase().includes(q)));
+  if (!list.length) { $('#orders').innerHTML = '<p class="empty">No orders match.</p>'; return; }
+  const nextBatches = DATA.batches.filter(b => ['open','confirmed'].includes(b.status));
+  $('#orders').innerHTML = `<table>
+    <tr><th>Placed</th><th>Code</th><th>Customer</th><th>Area</th><th>Batch</th>
+        <th class="num">Boxes</th><th class="num">Total</th><th>Status</th><th>Actions</th></tr>` +
+    list.map(o => {
+      const items = (o.items || []).map(i => `${esc(i.name)} × ${i.qty}`).join(', ');
+      const moveOpts = nextBatches.filter(b => b.batch_id !== o.batch_id)
+        .map(b => `<option value="${b.batch_id}">${day(b.batch_id)}</option>`).join('');
+      const live = ['reserved','link_sent'].includes(o.status);
+      return `<tr>
+        <td class="muted mono" style="font-size:13px">${stamp(o.created_at)}</td>
+        <td class="mono">${esc(o.code)}${o.rollover_count > 0 ? `<span class="flag">rolled ${o.rollover_count}×</span>` : ''}</td>
+        <td><strong>${esc(o.customer_name)}</strong>
+          <div class="muted" style="font-size:13px"><a href="https://wa.me/${esc(String(o.phone).replace(/\D/g,''))}" target="_blank" rel="noopener">${esc(o.phone)}</a></div>
+          <div class="muted" style="font-size:13px">${esc(o.address)}</div>
+          <div class="muted" style="font-size:13px">${items}</div>
+          ${(o.risk_flags || []).length ? `<span class="flag">${esc(o.risk_flags.join(', '))}</span>` : ''}</td>
+        <td>${esc(o.area)}</td>
+        <td class="mono" style="font-size:13px">${day(o.batch_id)}</td>
+        <td class="num mono">${o.boxes}</td>
+        <td class="num mono">${rupee(o.total)}</td>
+        <td>${orderTag(o.status)}</td>
+        <td><div class="actions">
+          ${live ? `<button class="btn small" data-order="${esc(o.code)}" data-do="mark_paid">Paid</button>` : ''}
+          ${o.status === 'paid' ? `<button class="btn small" data-order="${esc(o.code)}" data-do="mark_delivered">Delivered</button>` : ''}
+          ${live && moveOpts ? `<select data-move="${esc(o.code)}"><option value="">Move to…</option>${moveOpts}</select>` : ''}
+          ${live ? `<button class="btn small danger" data-order="${esc(o.code)}" data-do="cancel">Cancel</button>` : ''}
+        </div></td></tr>`;
+    }).join('') + '</table>';
+}
+
+function renderKitchen() {
+  const b = $('#k-batch').value;
+  const rows = DATA.kitchen.filter(k => k.batch_id === b);
+  const boxes = DATA.batches.find(x => x.batch_id === b) || {};
+  if (!rows.length) { $('#kitchen').innerHTML = '<p class="empty">Nothing reserved in this batch yet.</p>'; return; }
+  const CHIPS = { 'Kaya Varuthathu': 0.5, 'Madhuram Duo': 0.5 };
+  let kg = 0;
+  const body = rows.map(r => {
+    const perBox = CHIPS[r.product] ?? 0.5;
+    kg += perBox * r.boxes;
+    return `<tr><td>${esc(r.product)}</td><td class="num mono">${r.boxes}</td><td class="num mono">${(perBox * r.boxes).toFixed(2)} kg</td></tr>`;
+  }).join('');
+  $('#kitchen').innerHTML = `<table>
+    <tr><th>Product</th><th class="num">Boxes</th><th class="num">Chips needed</th></tr>${body}
+    <tr><td><strong>Total</strong></td><td class="num mono"><strong>${boxes.reserved_boxes ?? ''}</strong></td>
+        <td class="num mono"><strong>${kg.toFixed(2)} kg</strong></td></tr></table>
+    <p class="sub" style="margin-top:10px">Fry on ${day(b)}. Pack the same day and put it on the night bus.</p>`;
+}
+
+function renderDelivery() {
+  const b = $('#d-batch').value;
+  const rows = DATA.delivery.filter(d => d.batch_id === b);
+  if (!rows.length) { $('#delivery').innerHTML = '<p class="empty">No orders in this batch yet.</p>'; return; }
+  const ORDER = ['Kothanur','Horamavu','Ramamurthy Nagar','Byrathi'];
+  rows.sort((a, z) => ORDER.indexOf(a.area) - ORDER.indexOf(z.area));
+  let html = '', area = null;
+  rows.forEach(d => {
+    if (d.area !== area) { area = d.area; html += `<tr><td colspan="5" style="background:#EEF4EA"><strong>${esc(area)}</strong></td></tr>`; }
+    html += `<tr><td class="mono">${esc(d.code)}</td><td><strong>${esc(d.customer_name)}</strong></td>
+      <td><a href="tel:${esc(d.phone)}">${esc(d.phone)}</a></td>
+      <td>${esc(d.address)}${d.note ? `<div class="muted" style="font-size:13px">${esc(d.note)}</div>` : ''}</td>
+      <td class="num mono">${rupee(d.total)}</td></tr>`;
+  });
+  $('#delivery').innerHTML = `<table><tr><th>Code</th><th>Name</th><th>Phone</th><th>Address</th><th class="num">Total</th></tr>${html}</table>`;
+}
+
+function renderTraffic() {
+  const f = DATA.funnel;
+  $('#funnel').innerHTML = f.length ? `<table>
+    <tr><th>Day</th><th class="num">Visitors</th><th class="num">Added a box</th><th class="num">Picked a batch</th>
+        <th class="num">Tapped reserve</th><th class="num">Reserved</th><th class="num">WhatsApp</th><th class="num">Conversion</th></tr>` +
+    f.map(d => `<tr><td>${day(d.day)}</td><td class="num mono">${d.visitors}</td><td class="num mono">${d.added_box}</td>
+      <td class="num mono">${d.picked_batch}</td><td class="num mono">${d.clicked_reserve}</td>
+      <td class="num mono">${d.reserved}</td><td class="num mono">${d.whatsapp_clicks}</td>
+      <td class="num mono">${d.visitors ? (d.reserved / d.visitors * 100).toFixed(1) + '%' : '–'}</td></tr>`).join('') + '</table>'
+    : '<p class="empty">No visits recorded yet.</p>';
+
+  const by = {};
+  DATA.orders.forEach(o => { const k = o.utm_source || 'direct'; by[k] = (by[k] || 0) + 1; });
+  const keys = Object.keys(by).sort((a, b) => by[b] - by[a]);
+  $('#sources').innerHTML = keys.length ? `<table><tr><th>Source</th><th class="num">Orders</th></tr>` +
+    keys.map(k => `<tr><td>${esc(k)}</td><td class="num mono">${by[k]}</td></tr>`).join('') + '</table>'
+    : '<p class="empty">No orders yet.</p>';
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => say('Copied.')).catch(() => say('Could not copy.', true));
+}
+
+document.addEventListener('click', async e => {
+  const tab = e.target.closest('.tab');
+  if (tab) {
+    $$('.tab').forEach(t => t.setAttribute('aria-selected', String(t === tab)));
+    $$('section').forEach(s => s.classList.toggle('on', s.id === 'tab-' + tab.dataset.tab));
+    return;
+  }
+  const btn = e.target.closest('[data-act], [data-do]');
+  if (!btn) return;
+
+  if (btn.dataset.act === 'refresh') { loadAll(); return; }
+  if (btn.dataset.act === 'maintenance') {
+    btn.disabled = true;
+    try {
+      const r = await act('maintenance');
+      say(`Maintenance done. ${r.batches_created} new batch(es), ${r.rollover.moved} order(s) moved forward, ${r.links_expired} hold(s) released.`);
+      await loadAll();
+    } catch (err) { say(err.message, true); }
+    btn.disabled = false;
+    return;
+  }
+  if (btn.dataset.act === 'copy-kitchen') {
+    const b = $('#k-batch').value;
+    const rows = DATA.kitchen.filter(k => k.batch_id === b);
+    copyText(`urali batch ${day(b)}\n` + rows.map(r => `${r.product}: ${r.boxes} boxes`).join('\n'));
+    return;
+  }
+  if (btn.dataset.act === 'copy-delivery') {
+    const b = $('#d-batch').value;
+    const rows = DATA.delivery.filter(d => d.batch_id === b);
+    copyText(`urali delivery ${day(b)}\n\n` + rows.map(d =>
+      `${d.area} — ${d.customer_name}, ${d.phone}\n${d.address}\n${d.code}, ${rupee(d.total)}`).join('\n\n'));
+    return;
+  }
+
+  const code = btn.dataset.order, doing = btn.dataset.do;
+  if (!code || !doing) return;
+  const ask = { cancel: `Cancel ${code}? The boxes go back into the batch.`,
+                mark_paid: `Mark ${code} as paid?`,
+                mark_delivered: `Mark ${code} as delivered?` }[doing];
+  if (!confirm(ask)) return;
+  btn.disabled = true;
+  try { await act(doing, { code }); say(`${code}: ${doing.replace('_', ' ')} done.`); await loadAll(); }
+  catch (err) { say(`${code}: ${err.message}`, true); btn.disabled = false; }
+});
+
+document.addEventListener('change', async e => {
+  if (['f-status','f-batch'].includes(e.target.id)) return renderOrders();
+  if (e.target.id === 'k-batch') return renderKitchen();
+  if (e.target.id === 'd-batch') return renderDelivery();
+  const code = e.target.dataset.move;
+  if (code && e.target.value) {
+    const to = e.target.value;
+    if (!confirm(`Move ${code} to the batch fried ${day(to)}?`)) { e.target.value = ''; return; }
+    try { await act('move', { code, batch: to }); say(`${code} moved to ${day(to)}.`); await loadAll(); }
+    catch (err) { say(`${code}: ${err.message}`, true); e.target.value = ''; }
+  }
+});
+
+$('#f-text').addEventListener('input', renderOrders);
+loadAll();
+setInterval(loadAll, 120000);
+</script>
+</body>
+</html>
