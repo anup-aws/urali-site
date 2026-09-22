@@ -1,42 +1,36 @@
-# urali update 005 — automatic batches and an admin page
+# urali update 006 — image studio for your designer
 
-Upload these four files to the top level of `anup-aws/urali-site`, replacing `index.html`:
+Upload these to the top level of `anup-aws/urali-site` (replace existing files with the same name):
 
-- `005_urali_rollover_admin.sql`
-- `update-urali-005.sh`
-- `admin.html`
-- `index.html`
+    update-urali-006.sh   media_server.py   studio.html   admin.html   index.html
+    favicon.png   favicon-180.png   favicon-32.png   og-image.jpg
+    update-urali-005.sh   (small fix; replace the old one)
 
-Then run in the VPS web console:
+Run update 005 first if you haven't yet, then:
 
-    curl -fsSL "https://raw.githubusercontent.com/anup-aws/urali-site/main/update-urali-005.sh?r=$RANDOM" -o /root/update-urali-005.sh && bash /root/update-urali-005.sh 2>&1 | tee /root/urali-update-005.log
+    curl -fsSL "https://raw.githubusercontent.com/anup-aws/urali-site/main/update-urali-006.sh?r=$RANDOM" -o /root/update-urali-006.sh && bash /root/update-urali-006.sh 2>&1 | tee /root/urali-update-006.log
 
-It prints the admin address, username and a generated password at the end. Save the password
-somewhere safe — it is shown once and nowhere else. Don't paste it into a chat.
+At the end it prints a studio login for **designer**. Send it to him privately.
+Your own admin login works in the studio too.
 
-To change the password later: `bash /root/update-urali-005.sh --reset-password`
+To give someone else a studio login:  `bash /root/update-urali-006.sh --add-user ravi`
+To replace the designer's password:   `bash /root/update-urali-006.sh --add-user designer`
 
-## What changes
+## What your designer can do at uralichips.com/studio/
 
-**Batches run themselves.** A maintenance job runs every ten minutes as a systemd timer, so it
-does not depend on pg_cron. Each run creates new Wednesday batches, releases expired payment
-holds, marks past batches as fried, and rolls unfilled batches forward.
+Replace the picture at the top of the page, each of the four product boxes, the browser-tab
+icon, and the image shown when the link is shared on WhatsApp. He can drag a file onto a card,
+edit its description, switch back to any earlier upload, or return to the original drawing.
 
-**Rollover.** When a batch's cutoff passes without reaching its target, every live reservation
-moves to the next batch that has room. Counts on both batches update, so the boxes are never
-counted twice. A reservation carries `rollover_count` and `original_batch_id`, and after three
-moves it stops and the batch is marked "needs attention" instead.
+He cannot see orders, customers or anything in the admin page.
 
-**The page shows one batch.** `batchesShown` is now 1, so customers see only the batch that is
-open. Set it back to 3 in `CONFIG` if you want the three-week view again.
+## How it's kept safe and fast
 
-**Admin page** at `https://uralichips.com/admin/`, behind a login:
-
-- Batches, with progress to target and time to cutoff
-- Orders, with search and filters, and buttons to mark paid, mark delivered, move or cancel
-- Kitchen sheet per batch, with kilos to fry, copyable as text
-- Delivery run grouped by area, copyable as text
-- Traffic: visitors, funnel and where orders came from
-
-The admin API is a second PostgREST on localhost, reachable only through Nginx behind the
-login. The public API cannot see any admin view.
+- Every upload is decoded and re-encoded on the server. Only pixels are saved — anything else
+  hiding in a file is dropped. PNG, JPG and WebP only, up to 8 MB.
+- Photos are resized (1600 px for the top image, 1200 px for boxes) and saved as WebP, so a
+  6 MB phone photo becomes a few hundred KB.
+- Nothing is ever deleted. Every version is kept, and every change is logged with who made it
+  in `/var/lib/urali-media/audit.log`.
+- The service runs as its own user, can only write to the images folder, and is reachable only
+  through Nginx behind a login.

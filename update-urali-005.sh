@@ -115,7 +115,6 @@ block = """
         auth_basic_user_file /etc/nginx/.urali-admin;
         alias /var/www/urali-admin/;
         index index.html;
-        try_files $uri $uri/ /admin/index.html;
     }
 
     location /admin/api/ {

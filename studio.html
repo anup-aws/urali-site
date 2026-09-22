@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>urali studio · images</title>
+<link rel="icon" type="image/png" href="/images/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Chettan+2:wght@600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --manjal:#F2B632; --manjal-deep:#D9951A; --leaf:#1E4D2B; --leaf-dark:#133020;
+  --kasavu:#C9A227; --mundu:#FFFEF8; --muted:#5E5446; --line:#E4DAC0; --chuvappu:#B3261E; --ok:#2F6B3A;
+  --display:"Baloo Chettan 2",system-ui,sans-serif; --body:"Source Serif 4",Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#F6F4EC;font-family:var(--body);color:var(--leaf-dark);font-size:15px;line-height:1.5}
+h1,h2,h3,button,label.btn{font-family:var(--display)}
+:focus-visible{outline:3px solid var(--leaf);outline-offset:2px}
+header{background:var(--leaf);color:var(--mundu);padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:4px solid var(--kasavu)}
+header h1{font-size:22px;font-weight:800}
+header .spacer{flex:1}
+header a{color:var(--manjal);font-family:var(--display);font-weight:700;text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto;padding:18px}
+.intro{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:18px;color:var(--muted)}
+.intro strong{color:var(--leaf-dark)}
+.msg{position:sticky;top:8px;z-index:5;padding:10px 14px;border-radius:10px;margin-bottom:12px;font-size:14px;display:none}
+.msg.show{display:block}
+.msg.good{background:#DCEBD5;color:var(--ok)}
+.msg.bad{background:#F8DAD8;color:var(--chuvappu)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.slot{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.preview{aspect-ratio:16/10;background:repeating-conic-gradient(#F3EFE2 0 25%,#FBF9F1 0 50%) 0 0/20px 20px;display:grid;place-items:center;position:relative}
+.preview.square{aspect-ratio:1/1}
+.preview img{width:100%;height:100%;object-fit:contain;display:block}
+.preview .none{font-family:var(--display);font-weight:700;color:var(--muted);text-align:center;padding:18px;font-size:15px}
+.preview .none small{display:block;font-family:var(--body);font-weight:400;font-size:13px;margin-top:4px}
+.badge{position:absolute;top:10px;left:10px;background:var(--leaf-dark);color:var(--mundu);font-family:var(--display);font-weight:700;font-size:12px;padding:4px 10px;border-radius:99px}
+.badge.builtin{background:#fff;color:var(--muted);border:1px solid var(--line)}
+.body{padding:14px 16px;display:flex;flex-direction:column;gap:10px;flex:1}
+.body h2{font-size:18px}
+.where{color:var(--muted);font-size:14px}
+.spec{font-size:13px;background:#FBF6E6;border:1px solid #F0E3BD;border-radius:8px;padding:5px 9px;display:inline-block}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;background:var(--leaf);color:var(--mundu);padding:9px 16px;border-radius:99px;font-weight:700;font-size:14px;border:0;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--leaf-dark);border:2px solid var(--line)}
+.btn.small{padding:5px 11px;font-size:13px}
+.btn:disabled,.btn[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
+input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.alt{display:flex;gap:6px}
+.alt input{flex:1;font:inherit;font-size:14px;padding:7px 10px;border:2px solid var(--line);border-radius:10px;min-width:0}
+.alt label{font-size:13px;color:var(--muted);display:block;margin-bottom:3px}
+details summary{cursor:pointer;font-family:var(--display);font-weight:700;font-size:14px;color:var(--leaf)}
+.history{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px;margin-top:8px}
+.ver{border:2px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;cursor:pointer;padding:0;text-align:left}
+.ver.current{border-color:var(--leaf)}
+.ver img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#F3EFE2}
+.ver span{display:block;font-size:11px;padding:3px 5px;color:var(--muted);line-height:1.3}
+.drop{outline:3px dashed var(--manjal-deep);outline-offset:-8px}
+.busy{opacity:.55;pointer-events:none}
+footer{color:var(--muted);font-size:13px;text-align:center;padding:14px 18px 30px}
+</style>
+</head>
+<body>
+<header>
+  <h1>urali studio</h1>
+  <span class="spacer"></span>
+  <a href="/" target="_blank" rel="noopener" id="open-site">Open the website ↗</a>
+</header>
+
+<div class="wrap">
+  <div class="msg" id="msg" role="status" aria-live="polite"></div>
+  <div class="intro">
+    <strong>Replace any picture on uralichips.com.</strong>
+    Drop a PNG, JPG or WebP onto a card, or tap <em>Replace</em>. It's resized and cleaned on the server and goes live straight away — reload the website to see it.
+    Every upload is kept, so you can go back to an earlier version, or to the original drawing, at any time.
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+<footer>Changes are logged with your username.</footer>
+
+<script>
+const API = '/studio/api';
+const MAX = 8 * 1024 * 1024;
+const OK_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const kb = n => n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB';
+const when = s => { const d = new Date(s); return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }); };
+let SLOTS = [];
+
+function say(text, bad) {
+  const m = $('#msg');
+  m.textContent = text; m.className = 'msg show ' + (bad ? 'bad' : 'good');
+  clearTimeout(say.t); say.t = setTimeout(() => m.className = 'msg', 7000);
+}
+
+async function load() {
+  try {
+    const r = await fetch(API + '/state', { cache: 'no-store' });
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.error || 'Could not load');
+    SLOTS = j.slots; render();
+  } catch (e) { say('Could not load the images: ' + e.message, true); }
+}
+
+function render() {
+  $('#grid').innerHTML = SLOTS.map(s => {
+    const cur = s.history.find(h => h.file === s.current);
+    const square = s.kind !== 'og' && s.slot !== 'hero';
+    const preview = cur
+      ? `<img src="/images/${esc(cur.file)}" alt="${esc(s.alt)}"><span class="badge">Live · ${cur.w}×${cur.h} · ${kb(cur.bytes)}</span>`
+      : `<div class="none">Using the original ${s.kind === 'photo' ? 'drawing' : 'design'}<small>Upload an image to replace it</small></div><span class="badge builtin">Built-in</span>`;
+    const hist = s.history.length ? `<details><summary>Earlier versions (${s.history.length})</summary>
+      <div class="history">${s.history.map(h => `
+        <button class="ver ${h.file === s.current ? 'current' : ''}" data-use="${esc(s.slot)}" data-file="${esc(h.file)}" title="Use this version">
+          <img src="/images/${esc(h.file)}" alt="" loading="lazy">
+          <span>${when(h.at)}${h.by ? '<br>' + esc(h.by) : ''}${h.file === s.current ? '<br><strong>live</strong>' : ''}</span>
+        </button>`).join('')}</div></details>` : '';
+    return `<article class="slot" data-slot="${esc(s.slot)}">
+      <div class="preview ${square ? 'square' : ''}">${preview}</div>
+      <div class="body">
+        <h2>${esc(s.label)}</h2>
+        <p class="where">${esc(s.where)}</p>
+        <span class="spec">Best size: ${esc(s.size)} · PNG, JPG or WebP · up to 8 MB</span>
+        <div class="row">
+          <label class="btn">Replace<input type="file" accept="image/png,image/jpeg,image/webp" data-upload="${esc(s.slot)}"></label>
+          <button class="btn ghost" data-revert="${esc(s.slot)}" ${s.current ? '' : 'disabled'}>Back to original</button>
+        </div>
+        ${s.kind === 'photo' ? `<div><label for="alt-${esc(s.slot)}">Description for screen readers and search</label>
+          <div class="alt"><input id="alt-${esc(s.slot)}" value="${esc(s.alt)}" maxlength="160">
+          <button class="btn small ghost" data-alt="${esc(s.slot)}">Save</button></div></div>` : ''}
+        ${hist}
+      </div></article>`;
+  }).join('');
+}
+
+async function post(path, body) {
+  const r = await fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const j = await r.json().catch(() => ({ ok: false, error: 'HTTP ' + r.status }));
+  if (!j.ok) throw new Error(j.error || 'Failed');
+  return j;
+}
+
+async function upload(slot, file) {
+  if (!file) return;
+  if (!OK_TYPES.includes(file.type)) return say('Use a PNG, JPG or WebP file.', true);
+  if (file.size > MAX) return say(`That file is ${kb(file.size)}. Keep it under 8 MB.`, true);
+  const card = document.querySelector(`[data-slot="${slot}"]`);
+  card.classList.add('busy');
+  say('Uploading…');
+  try {
+    const r = await fetch(`${API}/upload?slot=${encodeURIComponent(slot)}`, { method: 'POST', headers: { 'Content-Type': file.type }, body: file });
+    const j = await r.json().catch(() => ({ ok: false, error: r.status === 413 ? 'That file is too big.' : 'HTTP ' + r.status }));
+    if (!j.ok) throw new Error(j.error);
+    say(`Done — ${j.w}×${j.h}, ${kb(j.bytes)}. It's live on the website now.`);
+    await load();
+  } catch (e) { say(e.message, true); card.classList.remove('busy'); }
+}
+
+document.addEventListener('change', e => {
+  const slot = e.target.dataset.upload;
+  if (slot) { upload(slot, e.target.files[0]); e.target.value = ''; }
+});
+
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-revert],[data-alt],[data-use]');
+  if (!t) return;
+  try {
+    if (t.dataset.revert) {
+      if (!confirm('Go back to the original? Your uploads are kept and you can switch back later.')) return;
+      await post('/revert', { slot: t.dataset.revert }); say('Back to the original.');
+    } else if (t.dataset.alt) {
+      const v = document.getElementById('alt-' + t.dataset.alt).value;
+      await post('/alt', { slot: t.dataset.alt, alt: v }); say('Description saved.');
+    } else if (t.dataset.use) {
+      await post('/use', { slot: t.dataset.use, file: t.dataset.file }); say('That version is live now.');
+    }
+    await load();
+  } catch (err) { say(err.message, true); }
+});
+
+// drag and drop onto any card
+document.addEventListener('dragover', e => { const c = e.target.closest('.slot'); if (c) { e.preventDefault(); c.classList.add('drop'); } });
+document.addEventListener('dragleave', e => { const c = e.target.closest('.slot'); if (c && !c.contains(e.relatedTarget)) c.classList.remove('drop'); });
+document.addEventListener('drop', e => {
+  const c = e.target.closest('.slot'); if (!c) return;
+  e.preventDefault(); c.classList.remove('drop');
+  upload(c.dataset.slot, e.dataTransfer.files[0]);
+});
+
+$('#open-site').addEventListener('click', e => { e.currentTarget.href = '/?v=' + Date.now(); });
+load();
+</script>
+</body>
+</html>
