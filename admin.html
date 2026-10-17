@@ -101,6 +101,7 @@ footer{color:var(--muted);font-size:13px;padding:10px 18px 30px;text-align:cente
 
   <nav class="tabs" role="tablist">
     <button class="tab" role="tab" data-tab="batches" aria-selected="true">Batches</button>
+    <button class="tab" role="tab" data-tab="attention" aria-selected="false">Attention</button>
     <button class="tab" role="tab" data-tab="orders" aria-selected="false">Orders</button>
     <button class="tab" role="tab" data-tab="kitchen" aria-selected="false">Kitchen sheet</button>
     <button class="tab" role="tab" data-tab="delivery" aria-selected="false">Delivery run</button>
@@ -112,6 +113,14 @@ footer{color:var(--muted);font-size:13px;padding:10px 18px 30px;text-align:cente
       <h2>Batches</h2>
       <p class="sub">A batch goes ahead at its target. If the cutoff passes without reaching it, the orders move to the next batch automatically.</p>
       <div id="batches"></div>
+    </div>
+  </section>
+
+  <section id="tab-attention">
+    <div class="panel">
+      <h2>Needs attention</h2>
+      <p class="sub">Live orders sitting on a batch whose cutoff has passed. Normally this list is empty &mdash; the maintenance timer moves them forward every ten minutes. Anything that stays here needs you.</p>
+      <div id="attention"></div>
     </div>
   </section>
 
@@ -208,12 +217,12 @@ async function act(action, args = {}) {
 
 async function loadAll() {
   try {
-    const [summary, batches, orders, kitchen, delivery, funnel] = await Promise.all([
-      get('admin_summary'), get('admin_batches'),
+    const [summary, batches, attention, orders, kitchen, delivery, funnel] = await Promise.all([
+      get('admin_summary'), get('admin_batches'), get('admin_attention'),
       get('admin_orders?limit=400'), get('admin_kitchen'),
       get('admin_delivery'), get('admin_funnel_daily?limit=21')
     ]);
-    DATA = { summary: summary[0] || {}, batches, orders, kitchen, delivery, funnel };
+    DATA = { summary: summary[0] || {}, batches, attention, orders, kitchen, delivery, funnel };
     renderAll();
   } catch (e) {
     say('Could not load data: ' + e.message, true);
@@ -222,7 +231,7 @@ async function loadAll() {
 
 function renderAll() {
   renderSummary(); renderBatches(); fillBatchPickers();
-  renderOrders(); renderKitchen(); renderDelivery(); renderTraffic();
+  renderAttention(); renderOrders(); renderKitchen(); renderDelivery(); renderTraffic();
   $('#clock').textContent = 'Updated ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
 }
 
@@ -246,6 +255,27 @@ function batchTag(b) {
                 cancelled:['Cancelled','bad'], fried:['Fried','cool'], delivered:['Delivered','ok'] };
   const [text, cls] = map[b.status] || [b.status, ''];
   return `<span class="tag ${cls}">${text}</span>`;
+}
+
+function renderAttention() {
+  const rows = (DATA.attention || []).map(a => `<tr>
+    <td class="mono">${esc(a.code)}</td>
+    <td><strong>${day(a.batch_id)}</strong><div class="muted" style="font-size:13px">${esc(a.batch_status)}</div></td>
+    <td>${esc(a.customer_name)}<div class="muted mono" style="font-size:13px">${esc(a.phone)}</div></td>
+    <td>${esc(a.area)}</td>
+    <td class="num mono">${a.boxes}</td>
+    <td class="num mono">${rupee(a.total)}</td>
+    <td class="num mono">${a.rollover_count}</td>
+    <td>${a.could_move_to ? `<span class="tag ok">${day(a.could_move_to)}</span>` : '<span class="tag bad">nowhere</span>'}</td>
+    <td class="muted" style="font-size:13px">${esc(a.reason)}</td>
+  </tr>`).join('');
+  $('#attention').innerHTML = (DATA.attention || []).length ? `<table>
+    <tr><th>Code</th><th>Stuck on</th><th>Customer</th><th>Area</th><th class="num">Boxes</th>
+        <th class="num">Value</th><th class="num">Rolls</th><th>Could move to</th><th>Why</th></tr>${rows}</table>`
+    : '<p class="muted">Nothing stuck. Every live order is on a batch that is still open.</p>';
+  const tab = document.querySelector('[data-tab="attention"]');
+  const n = (DATA.attention || []).length;
+  if (tab) tab.textContent = n ? `Attention (${n})` : 'Attention';
 }
 
 function renderBatches() {

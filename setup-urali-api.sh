@@ -32,8 +32,19 @@ runuser -u postgres -- psql -qtAc "select 1 from pg_database where datname='$DB'
   || runuser -u postgres -- createdb "$DB"
 TMP=$(mktemp -d)
 chmod 755 "$TMP"
-for f in 000_roles.sql 001_urali_core.sql 002_urali_schedules.sql; do
-  curl -fsSL "$REPO_RAW/server/db/$f" -o "$TMP/$f"
+# The .sql files live at the repo root, not under server/db/ — that stale path
+# made this script 404 on every run, which is the worst possible failure for the
+# one script you reach for when rebuilding.
+#
+# 002_urali_schedules.sql is deliberately NOT applied: pg_cron never fired
+# reliably here and was replaced by the urali-maintenance systemd timer, which
+# update-urali-005.sh installs. Applying 002 would schedule the same work twice.
+#
+# After this script, run in order:  update-urali-003.sh, update-urali-005.sh,
+# update-urali-006.sh, update-urali-007.sh
+for f in 000_roles.sql 001_urali_core.sql; do
+  curl -fsSL "$REPO_RAW/$f" -o "$TMP/$f" \
+    || curl -fsSL "$REPO_RAW/server/db/$f" -o "$TMP/$f"
   chmod 644 "$TMP/$f"
   runuser -u postgres -- psql -v ON_ERROR_STOP=1 -q -d "$DB" -f "$TMP/$f" >/dev/null
   echo "applied $f"
@@ -165,6 +176,9 @@ echo -n "reservations hidden from public (expect 401/403/404): "
 curl -s -o /dev/null -w '%{http_code}\n' "https://${DOMAIN}/api/rest/v1/reservations?select=phone"
 echo -n "direct write blocked (expect 403): "
 curl -s -o /dev/null -w '%{http_code}\n' -X POST "https://${DOMAIN}/api/rest/v1/batches" -H 'Content-Type: application/json' -d '{}'
-runuser -u postgres -- psql -d "$DB" -qtAc "select jobname, schedule from cron.job order by jobname"
+# Scheduled work runs from the urali-maintenance systemd timer, not pg_cron.
+echo -n "maintenance timer: "
+systemctl is-active urali-maintenance.timer 2>/dev/null \
+  || echo "not installed yet — run update-urali-005.sh next"
 rm -rf "$TMP"
 echo; echo "Done. API: https://${DOMAIN}/api"

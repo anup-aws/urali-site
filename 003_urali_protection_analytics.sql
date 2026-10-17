@@ -182,7 +182,12 @@ revoke execute on function public.req_header(text) from public;
 revoke execute on function public.req_ip() from public;
 
 -- ---------- handy views for you (not public) ----------
-create or replace view public.admin_orders as
+-- Dropped first, not "create or replace": 005 redefines admin_orders with a
+-- different column list, so replacing it in place fails with "cannot drop
+-- columns from view" on any re-run. Re-runnability matters most precisely when
+-- you are rebuilding after something went wrong.
+drop view if exists public.admin_orders;
+create view public.admin_orders as
 select r.code, r.created_at at time zone 'Asia/Kolkata' as created_ist, r.batch_id, r.status,
        r.customer_name, r.phone, r.area, r.boxes, r.total, r.risk_flags,
        r.ip, r.client ->> 'device' as device, r.utm ->> 'source' as utm_source, r.referrer
@@ -191,7 +196,8 @@ where r.source <> 'qa'
 order by r.created_at desc;
 revoke all on public.admin_orders from anon, authenticated;
 
-create or replace view public.admin_funnel_daily as
+drop view if exists public.admin_funnel_daily;
+create view public.admin_funnel_daily as
 select (created_at at time zone 'Asia/Kolkata')::date as day,
        count(distinct session_id) filter (where event = 'page_view')        as visitors,
        count(distinct session_id) filter (where event = 'box_added')        as added_box,
