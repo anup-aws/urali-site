@@ -1031,9 +1031,13 @@ function renderHeroSlides() {
   // listeners attach once; this function re-runs whenever the data changes
   if (!heroWired) {
     heroWired = true;
-    track.addEventListener('scroll', syncHeroDots, { passive: true });
-    ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(ev =>
-      track.addEventListener(ev, stopHeroAuto, { passive: true }));
+    track.addEventListener('scroll', onHeroScroll, { passive: true });
+    track.addEventListener('keydown', stopHeroAuto, { passive: true });
+    // a mouse press on the track is deliberate; a touch is not, because the
+    // finger may just be on its way down the page
+    track.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'mouse') stopHeroAuto();
+    }, { passive: true });
   }
   if (keep > 0) goHeroSlide(keep, false);
   syncHeroDots();
@@ -1050,13 +1054,42 @@ function syncHeroDots() {
   $$('#hs-dots .hs-dot').forEach((d, k) => d.setAttribute('aria-selected', String(k === i)));
 }
 
+let heroProgrammatic = false, heroSettle = null;
+
 function goHeroSlide(i, smooth) {
   const track = $('#hs-track');
   if (!track) return;
   const n = track.children.length;
+  const w = track.clientWidth;
+  if (!n || !w) return;
   const to = ((i % n) + n) % n;
-  track.scrollTo({ left: to * track.clientWidth, behavior: smooth && !reduceMotion ? 'smooth' : 'auto' });
+  const left = to * w;
+  heroProgrammatic = true;
+  track.scrollTo({ left, behavior: smooth && !reduceMotion ? 'smooth' : 'auto' });
+  clearTimeout(heroSettle);
+  heroSettle = setTimeout(() => {
+    // scroll-snap sometimes swallows a programmatic smooth scroll, most often
+    // the very first one, before the visitor has touched the track. If we did
+    // not land, place it directly with snapping briefly switched off.
+    if (Math.abs(track.scrollLeft - left) > 4) {
+      const prev = track.style.scrollSnapType;
+      track.style.scrollSnapType = 'none';
+      track.scrollLeft = left;
+      requestAnimationFrame(() => { track.style.scrollSnapType = prev; });
+    }
+    heroProgrammatic = false;
+    syncHeroDots();
+  }, smooth && !reduceMotion ? 650 : 60);
   syncHeroDots();
+}
+
+/* The only reliable sign the visitor has taken over is the track scrolling
+   horizontally when we did not scroll it. Listening for touchstart or wheel
+   was wrong: both fire while someone is simply scrolling the page past the
+   slider, which killed auto-advance on the first touch. */
+function onHeroScroll() {
+  syncHeroDots();
+  if (!heroProgrammatic) stopHeroAuto();
 }
 
 function stopHeroAuto() {
@@ -1068,6 +1101,10 @@ function startHeroAuto() {
   if (reduceMotion || heroTouched || heroTimer) return;
   heroTimer = setInterval(() => {
     if (document.hidden) return;
+    const track = $('#hs-track');
+    if (!track) return;
+    const r = track.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > (window.innerHeight || 0)) return; // scrolled past it
     goHeroSlide(heroIndex() + 1, true);
   }, 4200);
 }
