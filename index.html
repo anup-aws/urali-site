@@ -17,7 +17,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="description" content="A farm-to-home initiative, just started. Thrissur nendran chips fried only in coconut oil, no palm oil, no preservatives added, in small weekly batches. Reserve a box for Kothanur, Horamavu, Ramamurthy Nagar or Byrathi and pay only when your batch is confirmed.">
+<meta name="description" content="A farm-to-home initiative, just started. Thrissur nendran chips fried only in coconut oil, no palm oil, no preservatives added, in small weekly batches. Delivering in North Bengaluru - Kothanur and Byrathi 560077, Horamavu 560043, Ramamurthy Nagar 560016. Reserve a box and pay only when your batch is confirmed.">
 <meta name="theme-color" content="#F2B632">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -236,7 +236,7 @@ h1,h2,h3,h4{font-family:var(--display);font-weight:800;line-height:1.08;letter-s
 .bar-sticky{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--leaf-dark);color:var(--mundu);padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;z-index:20;border-top:4px solid var(--kasavu)}
 .bar-info{flex:1;line-height:1.25;min-width:0}
 .bar-info strong{font-family:var(--display);font-size:18px;display:block}
-.bar-info span{font-size:14px;color:var(--leaf-soft)}
+.bar-info span{font-size:14px;color:var(--leaf-soft);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar-sticky .btn{background:var(--manjal);color:var(--leaf-dark);min-height:48px;padding:0 20px;font-size:17px;white-space:nowrap}
 body.sheet-open .bar-sticky{display:none}
 
@@ -255,6 +255,44 @@ body.sheet-open .bar-sticky{display:none}
 .sheet .steps .n{width:36px;height:36px;font-size:18px}
 .sheet .steps p{font-size:15.5px;color:var(--leaf-dark);padding-top:5px}
 .sheet .btn-ghost{width:100%;margin-top:6px}
+
+/* ---- where we deliver ---- */
+.where{background:rgba(255,254,248,.55);border:2px solid rgba(19,48,32,.14);border-radius:16px;padding:13px 15px 12px;margin:16px 0 4px}
+.where-top{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:700;font-size:17px;color:var(--leaf-dark);margin:0 0 9px}
+.livedot{width:9px;height:9px;border-radius:50%;background:var(--leaf);flex:none;position:relative}
+.livedot::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--leaf);opacity:0;animation:ping 2.4s ease-out infinite}
+@keyframes ping{0%{transform:scale(.5);opacity:.75}70%,100%{transform:scale(1.35);opacity:0}}
+.pins{list-style:none;display:flex;flex-wrap:wrap;gap:7px;margin:0 0 9px}
+.pins li{background:var(--mundu);border:1.5px solid rgba(19,48,32,.16);border-radius:999px;padding:5px 11px 4px;font-size:14.5px;line-height:1.2;color:var(--leaf-dark);animation:pin-in .45s ease-out both}
+@keyframes pin-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.pins .pin,.area .pin{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--muted);margin-left:6px;letter-spacing:.01em}
+.area[aria-checked="true"] .pin{color:rgba(255,254,248,.78)}
+.where-note{font-size:14.5px;line-height:1.45;color:var(--leaf-dark);margin:0;opacity:.88}
+
+/* ---- live countdown ---- */
+.nb-timer{display:flex;align-items:baseline;gap:7px;margin:7px 0 0;font-size:14.5px;color:var(--muted)}
+.nb-timer b{font-family:var(--display);font-size:17px;color:var(--leaf-dark);font-variant-numeric:tabular-nums}
+.nb-timer.soon b{color:var(--chuvappu)}
+.nb-timer.soon{animation:nudge 2.6s ease-in-out infinite}
+@keyframes nudge{0%,88%,100%{transform:none}93%{transform:translateX(-2px)}96%{transform:translateX(2px)}}
+
+/* ---- upcoming fry dates strip ---- */
+.datestrip{display:flex;gap:8px;margin:14px 0 0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.datestrip::-webkit-scrollbar{display:none}
+.ds{flex:none;min-width:88px;background:var(--mundu);border:2px solid rgba(19,48,32,.14);border-radius:14px;padding:8px 11px 7px;text-align:center;animation:pin-in .5s ease-out both}
+.ds .ds-dow{font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.ds .ds-day{font-family:var(--display);font-weight:800;font-size:21px;line-height:1.1;color:var(--leaf-dark)}
+.ds .ds-tag{font-size:12px;color:var(--muted);margin-top:2px}
+.ds.now{border-color:var(--leaf);box-shadow:0 4px 0 var(--leaf)}
+.ds.now .ds-tag{color:var(--leaf);font-weight:700}
+.ds.later{opacity:.62}
+
+/* ---- progress bar gets a sweep while it fills ---- */
+.bar i{position:relative;overflow:hidden}
+.bar i::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.55) 50%,transparent 80%);transform:translateX(-100%);animation:sweep 2.8s ease-in-out 1.1s infinite}
+@keyframes sweep{to{transform:translateX(220%)}}
+
+.bar-info em{font-style:normal;font-variant-numeric:tabular-nums;color:var(--manjal)}
 
 @media (min-width:520px){.page{margin:28px auto;border-radius:26px;min-height:0}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
@@ -286,7 +324,7 @@ body.sheet-open .bar-sticky{display:none}
     <div class="brand">
       <span class="brand-mark" id="brand-mark">urali</span>
       <span class="brand-ml" lang="ml">ഉരുളി</span>
-      <span class="brand-route">Thrissur to Bengaluru</span>
+      <span class="brand-route">Thrissur to North Bengaluru</span>
     </div>
 
     <h1>Kaya varuthathu, fried after you order it.</h1>
@@ -333,7 +371,15 @@ body.sheet-open .bar-sticky{display:none}
       </svg>
     </div>
 
-    <p class="lede">A small farm-to-home run we've just started. Thrissur nendran, fried only in coconut oil in a heavy urali, one batch a week, and at your door in Kothanur, Horamavu, Ramamurthy Nagar or Byrathi 24 to 48 hours after frying.</p>
+    <p class="lede">A small farm-to-home run we've just started. Thrissur nendran, fried only in coconut oil in a heavy urali, one batch a week, and at your door in North Bengaluru 24 to 48 hours after frying.</p>
+
+    <div class="where">
+      <p class="where-top"><span class="livedot" aria-hidden="true"></span>Delivering in North Bengaluru</p>
+      <ul class="pins" id="pin-list"></ul>
+      <p class="where-note">For now we only take orders from these areas, so one run reaches everyone the day the chips land. We're expanding to other parts of Bengaluru soon.</p>
+    </div>
+
+    <div class="datestrip" id="datestrip" aria-label="Upcoming fry dates"></div>
 
     <div class="next-batch" id="next-batch" aria-live="polite"></div>
 
@@ -460,7 +506,7 @@ body.sheet-open .bar-sticky{display:none}
     <div class="field" id="f-area">
       <span class="legend" id="area-label">Area</span>
       <div class="areas" id="area-list" role="radiogroup" aria-labelledby="area-label"></div>
-      <p class="hint">We deliver to these four areas for now.</p>
+      <p class="hint">These four North Bengaluru areas for now. More of the city soon.</p>
       <p class="err">Choose your area.</p>
     </div>
     <div class="field" id="f-address">
@@ -494,12 +540,12 @@ body.sheet-open .bar-sticky{display:none}
     <details><summary>Will some chips break?</summary><p>A few, yes. They travel overnight in sealed pouches inside a box, but small breaks happen on the way.</p></details>
     <details><summary>How long do they stay crisp?</summary><p>Keep the pouch sealed and finish it within three weeks of the fry date. Once it's open, move the chips to an airtight jar and finish them within a few days. There are no preservatives added, so they aren't meant to be stored for long.</p></details>
     <details><summary>Is there any palm oil in them?</summary><p>No. Both boxes are fried only in coconut oil, including the sharkara varatti.</p></details>
-    <details><summary>I live outside these four areas.</summary><p>We're starting with Kothanur, Horamavu, Ramamurthy Nagar and Byrathi so one delivery run covers everyone. <a class="link" id="wa-area" target="_blank" rel="noopener">Message us on WhatsApp</a> and we'll tell you when we reach your area.</p></details>
+    <details><summary>I live outside these four areas.</summary><p>We're starting with Kothanur and Byrathi (560077), Horamavu (560043) and Ramamurthy Nagar (560016) so one delivery run covers everyone, and we're expanding to other parts of Bengaluru soon. <a class="link" id="wa-area" target="_blank" rel="noopener">Message us on WhatsApp</a> and we'll tell you when we reach your area.</p></details>
   </section>
 
   <footer class="foot">
     <div class="brand"><span class="brand-mark">urali</span><span class="brand-ml" lang="ml">ഉരുളി</span></div>
-    <p>A farm-to-home initiative, just started. Fried in Thrissur, delivered in Kothanur, Horamavu, Ramamurthy Nagar and Byrathi.</p>
+    <p>A farm-to-home initiative, just started. Fried in Thrissur, delivered in North Bengaluru &mdash; Kothanur and Byrathi 560077, Horamavu 560043, Ramamurthy Nagar 560016.</p>
     <p id="fssai"></p>
     <p><a id="wa-foot" target="_blank" rel="noopener">WhatsApp us</a></p>
   </footer>
@@ -548,6 +594,9 @@ const CONFIG = {
 };
 
 const AREAS = ['Kothanur', 'Horamavu', 'Ramamurthy Nagar', 'Byrathi'];
+// Display only. The value sent to the API stays the plain area name, because
+// create_reservation validates it against the areas list in settings.
+const PINCODE = { 'Kothanur': '560077', 'Byrathi': '560077', 'Horamavu': '560043', 'Ramamurthy Nagar': '560016' };
 
 const PRODUCTS = [
   { id:'classic', status:'open', art:'box', name:'Kaya Varuthathu', ml:'കായ വറുത്തത്', price:399,
@@ -813,9 +862,12 @@ function renderHero() {
     <div class="nb-top"><span class="nb-label">Next batch fries</span><strong>${fmt(b.fry)}</strong></div>
     <span class="bar" role="progressbar" aria-label="Boxes reserved for this batch" aria-valuemin="0" aria-valuemax="${tgt(b)}" aria-valuenow="${Math.min(b.reserved, tgt(b))}"><i></i></span>
     <p class="nb-count">${count}</p>
-    <p class="nb-cut">Orders close ${fmt(b.cutoff)}, ${hourText(CONFIG.cutoffHour)}</p>`;
+    <p class="nb-cut">Orders close ${fmt(b.cutoff)}, ${hourText(CONFIG.cutoffHour)}</p>
+    <p class="nb-timer" id="nb-timer" aria-live="off"></p>`;
   const fill = $('.bar i', el);
   requestAnimationFrame(() => requestAnimationFrame(() => { fill.style.width = pct + '%'; }));
+  renderDateStrip();
+  startTicking();
 }
 
 function renderBoxes() {
@@ -893,7 +945,75 @@ function renderBatches() {
 
 function renderAreas() {
   $('#area-list').innerHTML = AREAS.map(a =>
-    `<button class="area" role="radio" aria-checked="${state.area === a}" data-act="area" data-id="${a}">${a}</button>`).join('');
+    `<button class="area" role="radio" aria-checked="${state.area === a}" data-act="area" data-id="${a}">${a}<span class="pin">${PINCODE[a] || ''}</span></button>`).join('');
+}
+
+function renderPins() {
+  const el = $('#pin-list');
+  if (!el) return;
+  el.innerHTML = AREAS.map((a, i) =>
+    `<li style="animation-delay:${80 + i * 70}ms">${a}<span class="pin">${PINCODE[a] || ''}</span></li>`).join('');
+}
+
+/* Upcoming fry dates. The open batch comes from the API; the two after it are
+   the following Wednesdays, which is how the batch calendar is built. */
+function renderDateStrip() {
+  const el = $('#datestrip');
+  if (!el) return;
+  const b = batches.find(x => !isFull(x)) || batches[0];
+  if (!b) { el.innerHTML = ''; return; }
+  const cards = [{ d: b.fry, tag: 'Open now', cls: 'now' }];
+  for (let i = 1; i <= 2; i++) {
+    const d = new Date(b.fry.getTime());
+    d.setDate(d.getDate() + 7 * i);
+    cards.push({ d, tag: 'Then', cls: 'later' });
+  }
+  el.innerHTML = cards.map((c, i) => `
+    <div class="ds ${c.cls}" style="animation-delay:${120 + i * 90}ms">
+      <div class="ds-dow">${DAYS[c.d.getDay()]}</div>
+      <div class="ds-day">${c.d.getDate()} ${MONTHS[c.d.getMonth()]}</div>
+      <div class="ds-tag">${c.tag}</div>
+    </div>`).join('');
+}
+
+/* ---------- live countdown to the cutoff ---------- */
+function cutoffText(cutoff, compact) {
+  const ms = cutoff - new Date();
+  if (ms <= 0) return { text: 'closed', soon: true, closed: true };
+  const s = Math.floor(ms / 1000);
+  const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600);
+  const m = Math.floor(s % 3600 / 60), sec = s % 60;
+  const p2 = n => String(n).padStart(2, '0');
+  // compact form keeps the sticky bar on one line at 390px
+  if (d > 0) return { text: compact ? `${d}d ${h}h` : `${d} ${d === 1 ? 'day' : 'days'} ${h} hr`, soon: false };
+  if (h > 0) return { text: compact ? `${h}h ${p2(m)}m` : `${h} hr ${p2(m)} min`, soon: true };
+  return { text: compact ? `${m}m ${p2(sec)}s` : `${m} min ${p2(sec)} s`, soon: true };
+}
+
+let tickTimer = null;
+function tick() {
+  const b = batches.find(x => !isFull(x));
+  const el = $('#nb-timer');
+  if (b && el) {
+    const c = cutoffText(b.cutoff);
+    el.innerHTML = c.closed
+      ? 'Orders for this batch have closed.'
+      : `<b>${c.text}</b> left to reserve`;
+    el.classList.toggle('soon', c.soon);
+  }
+  const sub = $('#bar-sub');
+  if (b && sub && totals().boxes === 0) {
+    const c = cutoffText(b.cutoff, true);
+    sub.innerHTML = c.closed
+      ? `${fmt(b.fry)}`
+      : `${fmt(b.fry)} &middot; closes in <em>${c.text}</em>`;
+  }
+}
+
+function startTicking() {
+  if (tickTimer) clearInterval(tickTimer);
+  tick();
+  tickTimer = setInterval(tick, 1000);
 }
 
 function totals() {
@@ -924,7 +1044,17 @@ function updateBar() {
   const t = totals();
   const b = batchById(state.batchId);
   $('#bar-title').textContent = t.boxes === 0 ? 'Boxes from ₹399' : `${t.boxes} ${t.boxes === 1 ? 'box' : 'boxes'}, ${rupee(t.total)}`;
-  $('#bar-sub').textContent = b ? `Fried ${fmt(b.fry)}, pay later` : 'Nothing to pay today';
+  const nb = batches.find(x => !isFull(x));
+  if (b) {
+    $('#bar-sub').textContent = `Fried ${fmt(b.fry)}, pay later`;
+  } else if (nb) {
+    const c = cutoffText(nb.cutoff, true);
+    $('#bar-sub').innerHTML = c.closed
+      ? `${fmt(nb.fry)}`
+      : `${fmt(nb.fry)} &middot; closes in <em>${c.text}</em>`;
+  } else {
+    $('#bar-sub').textContent = 'Nothing to pay today';
+  }
   const step = t.boxes === 0 ? 'boxes' : !b ? 'batch' : 'reserve';
   const btn = $('#bar-btn');
   btn.dataset.step = step;
@@ -1188,7 +1318,7 @@ $('#fssai').textContent = CONFIG.fssai;
 $('#wa-foot').href = waLink('Hi, I have a question about urali chips.');
 $('#wa-area').href = waLink('Hi, do you deliver to my area? I live in ');
 $$('.js-target').forEach(el => { el.textContent = CONFIG.targetBoxes; });
-renderHero(); renderBoxes(); renderBatches(); renderAreas(); refresh();
+renderHero(); renderBoxes(); renderBatches(); renderAreas(); renderPins(); refresh();
 loadBatches();
 loadMedia();
 
