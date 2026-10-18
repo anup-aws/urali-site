@@ -70,6 +70,26 @@ h1,h2,h3,h4{font-family:var(--display);font-weight:800;line-height:1.08;letter-s
 .hero h1{font-size:43px;margin:22px 0 6px;max-width:11ch}
 .hero .ml-line{font-size:21px;font-weight:600;color:var(--sharkara)}
 .hero-art{margin:4px -22px 6px}
+
+/* hero slider: the urali first, then what we make */
+.hero-slider{margin:4px -22px 10px;position:relative}
+.hs-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.hs-track::-webkit-scrollbar{display:none}
+.hs-slide{flex:0 0 100%;scroll-snap-align:center;min-width:0}
+.hs-slide .hero-art{margin:0}
+.hs-card{padding:0 22px}
+.hs-figure{background:var(--stage,#F6D27A);border-radius:18px;display:grid;place-items:center;padding:14px;overflow:hidden}
+.hs-figure svg{width:100%;max-width:230px;display:block}
+.hs-figure img{width:100%;height:100%;object-fit:cover;display:block;border-radius:18px}
+.hs-figure.has-photo{padding:0}
+.hs-meta{display:flex;align-items:baseline;gap:9px;margin:9px 2px 0;flex-wrap:wrap}
+.hs-meta h3{font-size:21px;margin:0;line-height:1.15}
+.hs-meta .hs-ml{font-size:15px;color:var(--leaf-dark);opacity:.72}
+.hs-meta .hs-price{margin-left:auto;font-family:var(--display);font-weight:700;font-size:18px;color:var(--leaf-dark)}
+.hs-meta .hs-soon{margin-left:auto;font-size:13.5px;background:var(--leaf-dark);color:var(--mundu);border-radius:999px;padding:3px 10px 2px}
+.hs-dots{display:flex;justify-content:center;gap:7px;margin-top:10px}
+.hs-dot{width:8px;height:8px;border-radius:50%;border:0;padding:0;background:rgba(19,48,32,.26);transition:width .25s,background .25s}
+.hs-dot[aria-selected="true"]{width:22px;border-radius:99px;background:var(--leaf-dark)}
 .lede{max-width:36ch}
 .next-batch{background:var(--mundu);border-radius:16px;padding:14px 16px 12px;margin:20px 0 18px;box-shadow:0 6px 0 var(--manjal-deep)}
 .nb-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px}
@@ -330,7 +350,10 @@ body.sheet-open .bar-sticky{display:none}
     <h1>Kaya varuthathu, fried after you order it.</h1>
     <p class="ml-line" lang="ml">നാട്ടിലെ അതേ രുചി</p>
 
-    <div class="hero-art">
+    <div class="hero-slider">
+      <div class="hs-track" id="hs-track">
+        <div class="hs-slide">
+          <div class="hero-art">
       <svg viewBox="0 0 400 250" role="img" aria-label="Banana chips frying in a bell-metal urali on a banana leaf">
         <defs>
           <linearGradient id="bell" x1="0" x2="1">
@@ -369,6 +392,10 @@ body.sheet-open .bar-sticky{display:none}
           <path class="steam" style="animation-delay:2.2s" d="M258 128 c-9 -12 9 -20 0 -34 c-7 -10 5 -17 1 -26"/>
         </g>
       </svg>
+          </div>
+        </div>
+      </div>
+      <div class="hs-dots" id="hs-dots" role="tablist" aria-label="Choose a slide"></div>
     </div>
 
     <p class="lede">A small farm-to-home run we've just started. Thrissur nendran, fried only in coconut oil in a heavy urali, one batch a week, and at your door in North Bengaluru 24 to 48 hours after frying.</p>
@@ -702,7 +729,7 @@ async function loadMedia() {
     if (hero.w) { img.width = hero.w; img.height = hero.h; }
     img.onload = () => { art.innerHTML = ''; art.classList.add('has-photo'); art.appendChild(img); };
   }
-  if (Object.keys(MEDIA).some(k => k.startsWith('box-'))) renderBoxes();
+  if (Object.keys(MEDIA).some(k => k.startsWith('box-'))) { renderBoxes(); renderHeroSlides(); }
 }
 
 function clientMeta() {
@@ -726,6 +753,13 @@ const state = { qty: { classic: 0, duo: 0 }, batchId: null, area: null };
 function upcomingBatches(now = new Date()) {
   const out = [];
   const start = new Date(now); start.setHours(0,0,0,0);
+  // never fall back to a date before we open for orders; this mirrors
+  // orders_open_from in the database, which is what actually decides
+  if (CONFIG.firstBatch) {
+    const [fy, fm, fd] = CONFIG.firstBatch.split('-').map(Number);
+    const open = new Date(fy, fm - 1, fd);
+    if (open > start) { start.setTime(open.getTime()); }
+  }
   for (let i = 0; i < 42 && out.length < CONFIG.batchesShown; i++) {
     const fry = new Date(start); fry.setDate(start.getDate() + i);
     if (fry.getDay() !== CONFIG.fryWeekday) continue;
@@ -776,7 +810,7 @@ async function loadBatches() {
       reserved: r.reserved_boxes, target: r.target_boxes, capacity: r.capacity_boxes, status: r.status
     }));
     if (state.batchId && !batchById(state.batchId)) state.batchId = null;
-    renderHero(); renderBatches(); renderBoxes(); refresh();
+    renderHero(); renderBatches(); renderBoxes(); renderHeroSlides(); refresh();
   } catch (err) {
     console.warn('Could not load live batch counts', err);
   }
@@ -957,6 +991,85 @@ function renderBatches() {
 function renderAreas() {
   $('#area-list').innerHTML = AREAS.map(a =>
     `<button class="area" role="radio" aria-checked="${state.area === a}" data-act="area" data-id="${a}">${a}<span class="pin">${PINCODE[a] || ''}</span></button>`).join('');
+}
+
+/* The first slide is the urali drawing already in the markup, so loadMedia()
+   still finds .hero-art and can swap in a real photo. Products follow. */
+let heroTimer = null, heroTouched = false;
+
+let heroWired = false;
+
+function renderHeroSlides() {
+  const track = $('#hs-track'), dots = $('#hs-dots');
+  if (!track || !dots) return;
+  const keep = heroIndex();
+  $$('.hs-slide[data-product]', track).forEach(el => el.remove());
+  const stamp = batches[0] ? dayMonth(batches[0].fry) : '';
+  track.insertAdjacentHTML('beforeend', PRODUCTS.map(p => {
+    const photo = MEDIA['box-' + p.id];
+    const tail = p.price
+      ? `<span class="hs-price">${rupee(p.price)}</span>`
+      : `<span class="hs-soon">Coming soon</span>`;
+    return `<div class="hs-slide" data-product="${p.id}">
+      <div class="hs-card">
+        <div class="hs-figure${photo ? ' has-photo' : ''}" style="--stage:${p.stage}">
+          ${photo
+            ? `<img src="${photo.src}" alt="${(photo.alt || p.name).replace(/"/g, '&quot;')}" loading="lazy" decoding="async">`
+            : ART[p.art](p, stamp)}
+        </div>
+        <div class="hs-meta">
+          <h3>${p.name}</h3><span class="hs-ml" lang="ml">${p.ml}</span>${tail}
+        </div>
+      </div>
+    </div>`;
+  }).join(''));
+
+  const n = track.children.length;
+  dots.innerHTML = Array.from({ length: n }, (_, i) =>
+    `<button class="hs-dot" role="tab" aria-selected="${i === 0}" data-act="hs" data-id="${i}" aria-label="Slide ${i + 1} of ${n}"></button>`).join('');
+
+  // listeners attach once; this function re-runs whenever the data changes
+  if (!heroWired) {
+    heroWired = true;
+    track.addEventListener('scroll', syncHeroDots, { passive: true });
+    ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(ev =>
+      track.addEventListener(ev, stopHeroAuto, { passive: true }));
+  }
+  if (keep > 0) goHeroSlide(keep, false);
+  syncHeroDots();
+  startHeroAuto();
+}
+
+function heroIndex() {
+  const track = $('#hs-track');
+  return track ? Math.round(track.scrollLeft / Math.max(track.clientWidth, 1)) : 0;
+}
+
+function syncHeroDots() {
+  const i = heroIndex();
+  $$('#hs-dots .hs-dot').forEach((d, k) => d.setAttribute('aria-selected', String(k === i)));
+}
+
+function goHeroSlide(i, smooth) {
+  const track = $('#hs-track');
+  if (!track) return;
+  const n = track.children.length;
+  const to = ((i % n) + n) % n;
+  track.scrollTo({ left: to * track.clientWidth, behavior: smooth && !reduceMotion ? 'smooth' : 'auto' });
+  syncHeroDots();
+}
+
+function stopHeroAuto() {
+  heroTouched = true;
+  if (heroTimer) { clearInterval(heroTimer); heroTimer = null; }
+}
+
+function startHeroAuto() {
+  if (reduceMotion || heroTouched || heroTimer) return;
+  heroTimer = setInterval(() => {
+    if (document.hidden) return;
+    goHeroSlide(heroIndex() + 1, true);
+  }, 4200);
 }
 
 function renderOpeningLine() {
@@ -1300,6 +1413,7 @@ document.addEventListener('click', e => {
   const { act, id } = t.dataset;
   switch (act) {
     case 'goto': goTo(t.dataset.target); break;
+    case 'hs': stopHeroAuto(); goHeroSlide(Number(id), true); track('hero_slide', { to: Number(id) }); break;
     case 'flip': toggleFlip(id); track('box_flipped', { product: id }); break;
     case 'inc':
       state.qty[id] = Math.min(CONFIG.maxPerBox, state.qty[id] + 1);
@@ -1341,7 +1455,7 @@ $('#fssai').textContent = CONFIG.fssai;
 $('#wa-foot').href = waLink('Hi, I have a question about urali chips.');
 $('#wa-area').href = waLink('Hi, do you deliver to my area? I live in ');
 $$('.js-target').forEach(el => { el.textContent = CONFIG.targetBoxes; });
-renderHero(); renderBoxes(); renderBatches(); renderAreas(); renderPins(); refresh();
+renderHero(); renderBoxes(); renderHeroSlides(); renderBatches(); renderAreas(); renderPins(); refresh();
 loadBatches();
 loadMedia();
 
