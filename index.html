@@ -393,7 +393,7 @@ body.sheet-open .bar-sticky{display:none}
 
   <section class="sec about" id="about">
     <h2>We've just started</h2>
-    <p class="intro">urali is a small farm-to-home initiative, from Thrissur to a few neighbourhoods in Bengaluru.</p>
+    <p class="intro">urali is a small farm-to-home initiative, from Thrissur to a few neighbourhoods in North Bengaluru. <strong id="first-line"></strong></p>
     <ol class="chain">
       <li><span class="c-icon" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 36V18"/><path d="M20 21c-8-2-12-8-12-15 7 1 11 6 12 15z"/><path d="M20 24c7-3 11-9 11-16-7 2-10 7-11 16z"/></svg></span><span class="c-label">Thrissur farms</span></li>
       <li><span class="c-icon" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M6 19h28c-1 8-7 13-14 13S7 27 6 19z"/><path d="M2 19h4M34 19h4"/><path d="M16 13c-2-2 2-4 0-7M24 13c-2-2 2-4 0-7"/></svg></span><span class="c-label">Our urali</span></li>
@@ -540,6 +540,7 @@ body.sheet-open .bar-sticky{display:none}
     <details><summary>Will some chips break?</summary><p>A few, yes. They travel overnight in sealed pouches inside a box, but small breaks happen on the way.</p></details>
     <details><summary>How long do they stay crisp?</summary><p>Keep the pouch sealed and finish it within three weeks of the fry date. Once it's open, move the chips to an airtight jar and finish them within a few days. There are no preservatives added, so they aren't meant to be stored for long.</p></details>
     <details><summary>Is there any palm oil in them?</summary><p>No. Both boxes are fried only in coconut oil, including the sharkara varatti.</p></details>
+    <details><summary>When do you start?</summary><p>We open with our November batches. Whichever batch is open right now is always the one shown at the top of this page, with the date it fries and the date orders close. Nothing before November is being taken.</p></details>
     <details><summary>I live outside these four areas.</summary><p>We're starting with Kothanur and Byrathi (560077), Horamavu (560043) and Ramamurthy Nagar (560016) so one delivery run covers everyone, and we're expanding to other parts of Bengaluru soon. <a class="link" id="wa-area" target="_blank" rel="noopener">Message us on WhatsApp</a> and we'll tell you when we reach your area.</p></details>
   </section>
 
@@ -586,6 +587,7 @@ const CONFIG = {
   cutoffDaysBefore: 3,    // orders close this many days before frying (3 = Sunday)
   cutoffHour: 21,         // 24h clock, 21 = 9 pm
   batchesShown: 1,        // how many upcoming batches to show; 1 = the next batch only
+  firstBatch: '2026-11-04', // the batch we open with; matches orders_open_from in the database
   deliveryFee: 40,
   freeDeliveryAbove: 599,
   maxPerBox: 5,
@@ -639,6 +641,11 @@ const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const rupee = n => '₹' + n.toLocaleString('en-IN');
 const fmt = d => `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+const DAYS_LONG = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS_LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const fmtLong = d => `${DAYS_LONG[d.getDay()]} ${d.getDate()} ${MONTHS_LONG[d.getMonth()]}`;
+const isFirstBatch = d => CONFIG.firstBatch && ymd(d) === CONFIG.firstBatch;
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const dayMonth = d => `${d.getDate()} ${MONTHS[d.getMonth()]}`;
 const fmtRange = (a, b) => a.getMonth() === b.getMonth()
   ? `${DAYS[a.getDay()]} ${a.getDate()} to ${DAYS[b.getDay()]} ${b.getDate()} ${MONTHS[b.getMonth()]}`
@@ -867,6 +874,7 @@ function renderHero() {
   const fill = $('.bar i', el);
   requestAnimationFrame(() => requestAnimationFrame(() => { fill.style.width = pct + '%'; }));
   renderDateStrip();
+  renderOpeningLine();
   startTicking();
 }
 
@@ -924,9 +932,12 @@ function renderQty(id, focusAct) {
 function renderBatches() {
   const list = $('#batch-list');
   const dayName = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][CONFIG.fryWeekday];
+  const first = batches.length && isFirstBatch(batches[0].fry);
   $('#batch-intro').textContent = CONFIG.batchesShown > 1
     ? `We fry every ${dayName}. Pick the batch you want.`
-    : `We fry every ${dayName}. This is the batch that's open now.`;
+    : first
+      ? `We fry every ${dayName}. This is our very first batch, and it's open now.`
+      : `We fry every ${dayName}. This is the batch that's open now.`;
   if (!batches.length) { list.innerHTML = `<p class="batch-empty">New batch dates open soon.</p>`; return; }
   list.innerHTML = batches.map(b => {
     const pct = Math.min(100, Math.round(b.reserved / tgt(b) * 100));
@@ -948,6 +959,18 @@ function renderAreas() {
     `<button class="area" role="radio" aria-checked="${state.area === a}" data-act="area" data-id="${a}">${a}<span class="pin">${PINCODE[a] || ''}</span></button>`).join('');
 }
 
+function renderOpeningLine() {
+  const el = $('#first-line');
+  if (!el) return;
+  const b = batches.find(x => isFirstBatch(x.fry));
+  // only while the first batch is still open
+  if (b && b.cutoff > new Date()) {
+    el.textContent = `Our first batch goes out on ${fmtLong(b.fry)}.`;
+  } else {
+    el.textContent = '';
+  }
+}
+
 function renderPins() {
   const el = $('#pin-list');
   if (!el) return;
@@ -962,7 +985,7 @@ function renderDateStrip() {
   if (!el) return;
   const b = batches.find(x => !isFull(x)) || batches[0];
   if (!b) { el.innerHTML = ''; return; }
-  const cards = [{ d: b.fry, tag: 'Open now', cls: 'now' }];
+  const cards = [{ d: b.fry, tag: isFirstBatch(b.fry) ? 'Our first batch' : 'Open now', cls: 'now' }];
   for (let i = 1; i <= 2; i++) {
     const d = new Date(b.fry.getTime());
     d.setDate(d.getDate() + 7 * i);
